@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,24 +7,23 @@ import { toast } from "@/components/ui/use-toast";
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<any>(null);
 
   // Initialize speech recognition
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
       
       recognitionInstance.continuous = true;
       recognitionInstance.interimResults = true;
       recognitionInstance.lang = 'en-US';
       
-      recognitionInstance.onresult = (event) => {
+      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const current = event.resultIndex;
         const result = event.results[current][0].transcript.toLowerCase();
         setTranscript(result);
         
-        // Process commands
         if (result.includes("create new") || result.includes("create project")) {
           handleCommand("create");
         } else if (result.includes("edit project") || result.includes("edit")) {
@@ -33,7 +31,7 @@ const Index = () => {
         }
       };
       
-      recognitionInstance.onerror = (event) => {
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error', event.error);
         setIsListening(false);
         toast({
@@ -52,7 +50,6 @@ const Index = () => {
       });
     }
     
-    // Cleanup
     return () => {
       if (recognition) {
         recognition.stop();
@@ -99,7 +96,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#FDF0D5] p-6 md:p-12">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
-        {/* Left side - Brand section */}
         <div className="space-y-6 animate-slide-in">
           <h1 className="text-4xl md:text-6xl font-bold text-[#780000]">
             Speak2web
@@ -134,7 +130,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Right side - Action cards */}
         <div className="space-y-6">
           <Card 
             className="p-6 hover-scale bg-white/80 backdrop-blur border-[#780000]/20 cursor-pointer animate-fade-in"
@@ -166,7 +161,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="mt-12 text-center text-[#780000]/60 animate-fade-in" style={{ animationDelay: "0.6s" }}>
         <p>Powered by voice recognition technology. <span className="text-[#C1121F]">Speak</span> to create.</p>
       </footer>
