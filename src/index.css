@@ -52,14 +52,3 @@
 .hover-scale:hover {
   transform: scale(1.02);
 }
-
-/* Add Card hover styles */
-.card:hover h2,
-.card:hover p,
-.card:hover svg {
-  color: #FDF0D5 !important;
-}
-
-.card:hover {
-  background-color: #C1121F !important;
-}

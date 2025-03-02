@@ -133,30 +133,30 @@ const Index = () => {
 
         <div className="space-y-6">
           <Card 
-            className="p-6 bg-white/80 backdrop-blur border-[#780000]/20 cursor-pointer animate-fade-in transition-colors duration-300 hover:bg-[#C1121F]"
+            className="p-6 hover-scale bg-white/80 backdrop-blur border-[#780000]/20 cursor-pointer animate-fade-in"
             style={{ animationDelay: "0.2s" }}
             onClick={() => handleCommand("create")}
           >
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-[#780000] group-hover:text-[#FDF0D5] transition-colors duration-300">Create New</h2>
-                <p className="text-[#C1121F] mt-2 transition-colors duration-300 group-hover:text-[#FDF0D5]">Start a fresh project with voice commands</p>
+                <h2 className="text-2xl font-semibold text-[#780000]">Create New</h2>
+                <p className="text-[#C1121F] mt-2">Start a fresh project with voice commands</p>
               </div>
-              <ArrowRight className="h-6 w-6 text-[#780000] transition-colors duration-300 group-hover:text-[#FDF0D5]" />
+              <ArrowRight className="h-6 w-6 text-[#780000]" />
             </div>
           </Card>
 
           <Card 
-            className="p-6 bg-white/80 backdrop-blur border-[#780000]/20 cursor-pointer animate-fade-in transition-colors duration-300 hover:bg-[#C1121F]"
+            className="p-6 hover-scale bg-white/80 backdrop-blur border-[#780000]/20 cursor-pointer animate-fade-in"
             style={{ animationDelay: "0.4s" }}
             onClick={() => handleCommand("edit")}
           >
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-[#780000] transition-colors duration-300 group-hover:text-[#FDF0D5]">Edit Project</h2>
-                <p className="text-[#C1121F] mt-2 transition-colors duration-300 group-hover:text-[#FDF0D5]">Continue working on existing projects</p>
+                <h2 className="text-2xl font-semibold text-[#780000]">Edit Project</h2>
+                <p className="text-[#C1121F] mt-2">Continue working on existing projects</p>
               </div>
-              <ArrowRight className="h-6 w-6 text-[#780000] transition-colors duration-300 group-hover:text-[#FDF0D5]" />
+              <ArrowRight className="h-6 w-6 text-[#780000]" />
             </div>
           </Card>
         </div>
