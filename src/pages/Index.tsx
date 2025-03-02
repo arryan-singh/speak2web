@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -122,9 +123,9 @@ const Index = () => {
               )}
             </Button>
             {isListening && (
-              <div className="mt-4 p-3 bg-white/30 backdrop-blur rounded-md border border-[#780000]/20">
-                <p className="text-sm text-[#780000] font-medium">I heard: {transcript}</p>
-                <p className="text-xs text-[#C1121F] mt-1">Try saying "Create New" or "Edit Project"</p>
+              <div className="mt-4 p-3 bg-white/70 backdrop-blur rounded-md border border-[#780000]/30 shadow-sm">
+                <p className="text-sm font-medium text-[#780000]">I heard: <span className="text-[#C1121F] font-semibold">{transcript}</span></p>
+                <p className="text-xs text-[#C1121F] mt-1 font-medium">Try saying "Create New" or "Edit Project"</p>
               </div>
             )}
           </div>
