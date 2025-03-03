@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Mic, MicOff } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [recognition, setRecognition] = useState<any>(null);
+  const navigate = useNavigate();
 
   // Initialize speech recognition
   useEffect(() => {
@@ -79,18 +81,12 @@ const Index = () => {
   };
 
   const handleCommand = (command: string) => {
-    if (command === "create") {
+    if (command === "create" || command === "edit") {
       toast({
         title: "Command Recognized",
-        description: "Creating new project..."
+        description: `${command === "create" ? "Creating" : "Editing"} project...`
       });
-      // Add navigation or action logic here
-    } else if (command === "edit") {
-      toast({
-        title: "Command Recognized",
-        description: "Editing project..."
-      });
-      // Add navigation or action logic here
+      navigate("/editor");
     }
   };
 
