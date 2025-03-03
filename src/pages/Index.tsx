@@ -106,7 +106,7 @@ const Index = () => {
           <div className="mt-6">
             <Button 
               onClick={toggleListening} 
-              className={`flex items-center gap-2 ${isListening ? 'bg-error hover:bg-error/90' : 'bg-cream text-[#780000] border border-[#780000] hover:bg-cream/90'}`}
+              className={`flex items-center gap-2 ${isListening ? 'bg-error hover:bg-error/90' : 'bg-cream text-primary border border-primary hover:bg-cream/90'}`}
             >
               {isListening ? (
                 <>

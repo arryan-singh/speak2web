@@ -126,28 +126,28 @@ const ProjectEditor = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#FDF0D5] overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Left Section - Chat Interface (1/4 width) */}
-      <div className="w-1/4 flex flex-col border-r border-[#780000]/20 p-4">
+      <div className="w-1/4 flex flex-col border-r border-primary/20 p-4">
         <div className="flex items-center gap-2 mb-4">
           <Link to="/">
-            <Button variant="outline" size="icon" className="border-[#780000] text-[#780000]">
+            <Button variant="outline" size="icon" className="border-primary text-primary">
               <ArrowLeft size={18} />
             </Button>
           </Link>
-          <h2 className="text-xl font-bold text-[#780000]">Project Assistant</h2>
+          <h2 className="text-xl font-bold text-primary">Project Assistant</h2>
         </div>
         
         {/* Messages container */}
         <div className="flex-grow overflow-y-auto pr-2 mb-4">
           <div className="space-y-4">
             {messages.map((message, index) => (
-              <div key={index} className={`${message.type === 'user' ? 'ml-auto bg-[#780000] text-white' : 'bg-white text-[#780000]'} p-3 rounded-lg max-w-[85%] shadow-sm`}>
+              <div key={index} className={`${message.type === 'user' ? 'ml-auto bg-primary text-white' : 'bg-white text-primary'} p-3 rounded-lg max-w-[85%] shadow-sm`}>
                 {message.isProcessing ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#C1121F] rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-[#C1121F] rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-[#C1121F] rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                    <div className="w-2 h-2 bg-primary-dark rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-primary-dark rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-primary-dark rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                   </div>
                 ) : (
                   <p className="whitespace-pre-wrap break-words">{message.content}</p>
@@ -160,7 +160,7 @@ const ProjectEditor = () => {
         
         {/* Voice transcript display */}
         {isListening && transcript && (
-          <div className="mb-2 p-2 bg-white/70 rounded-md border border-[#780000]/30 text-sm text-[#C1121F]">
+          <div className="mb-2 p-2 bg-white/70 rounded-md border border-primary/30 text-sm text-primary-dark">
             {transcript}
           </div>
         )}
@@ -171,7 +171,7 @@ const ProjectEditor = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyPress}
-            className="w-full p-3 pr-20 border border-[#780000]/30 rounded-md bg-white/90 resize-none focus:outline-none focus:ring-1 focus:ring-[#780000]"
+            className="w-full p-3 pr-20 border border-primary/30 rounded-md bg-white/90 resize-none focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="Type your message..."
             rows={3}
           />
@@ -179,7 +179,7 @@ const ProjectEditor = () => {
             <Button 
               onClick={toggleListening} 
               size="icon"
-              className={`${isListening ? 'bg-[#C1121F]' : 'bg-[#FDF0D5] text-[#780000] border border-[#780000]'} hover:bg-opacity-90`}
+              className={`${isListening ? 'bg-primary-dark' : 'bg-cream text-primary border border-primary'} hover:bg-opacity-90`}
             >
               {isListening ? <MicOff size={18} /> : <Mic size={18} />}
             </Button>
@@ -187,7 +187,7 @@ const ProjectEditor = () => {
               onClick={() => handleSend()}
               size="icon"
               disabled={!inputValue.trim()}
-              className="bg-[#780000] hover:bg-opacity-90"
+              className="bg-primary hover:bg-opacity-90"
             >
               <Send size={18} />
             </Button>
@@ -198,31 +198,31 @@ const ProjectEditor = () => {
       {/* Right Section - Project Preview (3/4 width) */}
       <div className="w-3/4 bg-white p-6 overflow-auto">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-[#780000]">Project Preview</h1>
-          <p className="text-[#C1121F]">Real-time preview of your project</p>
+          <h1 className="text-2xl font-bold text-primary">Project Preview</h1>
+          <p className="text-primary-dark">Real-time preview of your project</p>
         </div>
         
         {/* Preview area */}
-        <div className="bg-gray-100 rounded-lg border border-gray-200 h-[calc(100%-80px)] flex items-center justify-center">
+        <div className="bg-background-darker rounded-lg border border-gray-200 h-[calc(100%-80px)] flex items-center justify-center">
           <div className="text-center p-8">
-            <h3 className="text-xl font-medium text-[#780000] mb-2">Preview Area</h3>
-            <p className="text-gray-600 mb-4">Your project changes will appear here in real-time</p>
+            <h3 className="text-xl font-medium text-primary mb-2">Preview Area</h3>
+            <p className="text-accent mb-4">Your project changes will appear here in real-time</p>
             <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
               <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-[#780000]">Project Structure</h4>
-                <p className="text-sm text-[#C1121F] mt-1">Core components</p>
+                <h4 className="font-medium text-primary">Project Structure</h4>
+                <p className="text-sm text-primary-dark mt-1">Core components</p>
               </Card>
               <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-[#780000]">Assets</h4>
-                <p className="text-sm text-[#C1121F] mt-1">Media files</p>
+                <h4 className="font-medium text-primary">Assets</h4>
+                <p className="text-sm text-primary-dark mt-1">Media files</p>
               </Card>
               <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-[#780000]">Styling</h4>
-                <p className="text-sm text-[#C1121F] mt-1">CSS & themes</p>
+                <h4 className="font-medium text-primary">Styling</h4>
+                <p className="text-sm text-primary-dark mt-1">CSS & themes</p>
               </Card>
               <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-[#780000]">Logic</h4>
-                <p className="text-sm text-[#C1121F] mt-1">Code & functions</p>
+                <h4 className="font-medium text-primary">Logic</h4>
+                <p className="text-sm text-primary-dark mt-1">Code & functions</p>
               </Card>
             </div>
           </div>
