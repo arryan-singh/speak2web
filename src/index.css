@@ -23,8 +23,13 @@
   }
 
   body {
-    @apply bg-background text-text;
+    @apply bg-background text-text font-sans;
     background-image: linear-gradient(to bottom, var(--background), var(--background-darker));
+    letter-spacing: 0.01em;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
   }
 }
 
@@ -59,9 +64,35 @@
 }
 
 .hover-scale {
-  transition: transform 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .hover-scale:hover {
   transform: scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-primary text-white px-5 py-2.5 rounded-lg font-medium 
+    transition-all duration-200 hover:bg-primary-dark focus:ring-2 
+    focus:ring-primary/50 focus:outline-none;
+}
+
+.btn-secondary {
+  @apply bg-white text-primary border border-primary/20 px-5 py-2.5 
+    rounded-lg font-medium transition-all duration-200 
+    hover:bg-gray-50 focus:ring-2 focus:ring-primary/50 focus:outline-none;
+}
+
+/* Card styles */
+.custom-card {
+  @apply bg-white border border-gray-200 rounded-xl shadow-sm p-6
+    transition-all duration-200 hover:shadow-md;
+}
+
+/* Input field styles */
+.input-field {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary
+    focus:ring-1 focus:ring-primary/30 focus:outline-none transition-all duration-200;
 }

@@ -126,28 +126,36 @@ const ProjectEditor = () => {
   };
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-screen bg-white overflow-hidden">
       {/* Left Section - Chat Interface (1/4 width) */}
-      <div className="w-1/4 flex flex-col border-r border-primary/20 p-4">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="w-1/4 flex flex-col border-r border-gray-200 bg-white">
+        <div className="flex items-center gap-2 p-4 border-b border-gray-200">
           <Link to="/">
-            <Button variant="outline" size="icon" className="border-primary text-primary">
+            <Button variant="outline" size="icon" className="border-gray-200 text-primary hover:bg-gray-50">
               <ArrowLeft size={18} />
             </Button>
           </Link>
-          <h2 className="text-xl font-bold text-primary">Project Assistant</h2>
+          <h2 className="text-xl font-semibold text-primary">Project Assistant</h2>
         </div>
         
         {/* Messages container */}
-        <div className="flex-grow overflow-y-auto pr-2 mb-4">
+        <div className="flex-grow overflow-y-auto p-4 mb-2 bg-gray-50">
           <div className="space-y-4">
             {messages.map((message, index) => (
-              <div key={index} className={`${message.type === 'user' ? 'ml-auto bg-primary text-white' : 'bg-white text-primary'} p-3 rounded-lg max-w-[85%] shadow-sm`}>
+              <div 
+                key={index} 
+                className={`${
+                  message.type === 'user' 
+                    ? 'ml-auto bg-primary text-white' 
+                    : 'bg-white text-primary border border-gray-200'
+                } p-4 rounded-xl max-w-[85%] shadow-sm animate-fade-in`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
                 {message.isProcessing ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary-dark rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-primary-dark rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-primary-dark rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
+                  <div className="flex items-center gap-2 p-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                   </div>
                 ) : (
                   <p className="whitespace-pre-wrap break-words">{message.content}</p>
@@ -160,70 +168,95 @@ const ProjectEditor = () => {
         
         {/* Voice transcript display */}
         {isListening && transcript && (
-          <div className="mb-2 p-2 bg-white/70 rounded-md border border-primary/30 text-sm text-primary-dark">
+          <div className="mx-4 mb-3 p-3 bg-white rounded-lg border border-primary/20 text-sm text-primary shadow-sm">
             {transcript}
           </div>
         )}
         
         {/* Input area */}
-        <div className="relative">
-          <textarea
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyPress}
-            className="w-full p-3 pr-20 border border-primary/30 rounded-md bg-white/90 resize-none focus:outline-none focus:ring-1 focus:ring-primary"
-            placeholder="Type your message..."
-            rows={3}
-          />
-          <div className="absolute bottom-3 right-3 flex gap-2">
-            <Button 
-              onClick={toggleListening} 
-              size="icon"
-              className={`${isListening ? 'bg-primary-dark' : 'bg-cream text-primary border border-primary'} hover:bg-opacity-90`}
-            >
-              {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-            </Button>
-            <Button
-              onClick={() => handleSend()}
-              size="icon"
-              disabled={!inputValue.trim()}
-              className="bg-primary hover:bg-opacity-90"
-            >
-              <Send size={18} />
-            </Button>
+        <div className="p-4 border-t border-gray-200 bg-white">
+          <div className="relative">
+            <textarea
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="w-full p-4 pr-24 border border-gray-300 rounded-xl bg-white/90 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all"
+              placeholder="Type your message..."
+              rows={3}
+            />
+            <div className="absolute bottom-3 right-3 flex gap-2">
+              <Button 
+                onClick={toggleListening} 
+                size="icon"
+                variant="outline"
+                className={`${
+                  isListening 
+                    ? 'bg-primary-dark text-white border-0' 
+                    : 'bg-white text-primary border border-gray-300'
+                } hover:bg-opacity-90 rounded-xl h-10 w-10`}
+              >
+                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              </Button>
+              <Button
+                onClick={() => handleSend()}
+                size="icon"
+                disabled={!inputValue.trim()}
+                className="bg-primary hover:bg-primary-dark text-white rounded-xl h-10 w-10 transition-colors"
+              >
+                <Send size={18} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
       
       {/* Right Section - Project Preview (3/4 width) */}
-      <div className="w-3/4 bg-white p-6 overflow-auto">
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold text-primary">Project Preview</h1>
-          <p className="text-primary-dark">Real-time preview of your project</p>
+      <div className="w-3/4 bg-gray-50 p-8 overflow-auto">
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-primary mb-2">Project Preview</h1>
+          <p className="text-accent">Real-time preview of your project</p>
         </div>
         
         {/* Preview area */}
-        <div className="bg-background-darker rounded-lg border border-gray-200 h-[calc(100%-80px)] flex items-center justify-center">
-          <div className="text-center p-8">
-            <h3 className="text-xl font-medium text-primary mb-2">Preview Area</h3>
-            <p className="text-accent mb-4">Your project changes will appear here in real-time</p>
-            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-              <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-primary">Project Structure</h4>
-                <p className="text-sm text-primary-dark mt-1">Core components</p>
-              </Card>
-              <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-primary">Assets</h4>
-                <p className="text-sm text-primary-dark mt-1">Media files</p>
-              </Card>
-              <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-primary">Styling</h4>
-                <p className="text-sm text-primary-dark mt-1">CSS & themes</p>
-              </Card>
-              <Card className="p-4 hover-scale">
-                <h4 className="font-medium text-primary">Logic</h4>
-                <p className="text-sm text-primary-dark mt-1">Code & functions</p>
-              </Card>
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-[calc(100%-100px)] overflow-hidden">
+          <div className="h-full flex flex-col">
+            {/* Preview header */}
+            <div className="bg-gray-50 border-b border-gray-200 p-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                <div className="flex-1 text-center">
+                  <span className="text-sm font-medium text-gray-500">Preview</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Preview content */}
+            <div className="flex-1 p-8 overflow-auto">
+              <div className="text-center max-w-2xl mx-auto">
+                <h3 className="text-2xl font-semibold text-primary mb-4">Project Structure</h3>
+                <p className="text-accent mb-8">Your project changes will appear here in real-time</p>
+                
+                <div className="grid grid-cols-2 gap-6 mt-8">
+                  <Card className="p-6 hover-scale border border-gray-200">
+                    <h4 className="font-medium text-primary text-lg mb-2">Components</h4>
+                    <p className="text-sm text-accent">Core building blocks</p>
+                  </Card>
+                  <Card className="p-6 hover-scale border border-gray-200">
+                    <h4 className="font-medium text-primary text-lg mb-2">Assets</h4>
+                    <p className="text-sm text-accent">Media & resources</p>
+                  </Card>
+                  <Card className="p-6 hover-scale border border-gray-200">
+                    <h4 className="font-medium text-primary text-lg mb-2">Styling</h4>
+                    <p className="text-sm text-accent">Design elements</p>
+                  </Card>
+                  <Card className="p-6 hover-scale border border-gray-200">
+                    <h4 className="font-medium text-primary text-lg mb-2">Logic</h4>
+                    <p className="text-sm text-accent">Functional code</p>
+                  </Card>
+                </div>
+              </div>
             </div>
           </div>
         </div>
