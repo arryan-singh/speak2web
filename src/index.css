@@ -5,13 +5,26 @@
 
 @layer base {
   :root {
+    /* New color variables */
+    --primary: #357ABD;
+    --primary-dark: #1D72B8;
+    --accent: #00D1B2;
+    --background: #F7F9FC;
+    --background-darker: #EDEFF2;
+    --text: #333333;
+    --error: #E85A50;
+    --success: #A0D468;
+    --lavender: #F2EFF8;
+    
+    /* Keep original colors for compatibility */
     --maroon: #780000;
     --red: #C1121F;
     --cream: #FDF0D5;
   }
 
   body {
-    @apply bg-[#FDF0D5] text-[#780000];
+    @apply bg-background text-text;
+    background-image: linear-gradient(to bottom, var(--background), var(--background-darker));
   }
 }
 

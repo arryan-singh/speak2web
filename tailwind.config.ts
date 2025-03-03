@@ -19,6 +19,18 @@ export default {
     },
     extend: {
       colors: {
+        // New color palette
+        primary: "#357ABD",
+        "primary-dark": "#1D72B8",
+        accent: "#00D1B2",
+        background: "#F7F9FC",
+        "background-darker": "#EDEFF2",
+        text: "#333333",
+        error: "#E85A50",
+        success: "#A0D468",
+        lavender: "#F2EFF8",
+        
+        // Keep existing color variables for backward compatibility
         maroon: "#780000",
         crimson: "#C1121F",
         cream: "#FDF0D5",
@@ -27,10 +39,6 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
 					foreground: 'hsl(var(--secondary-foreground))'
