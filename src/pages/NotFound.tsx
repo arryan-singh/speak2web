@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const NotFound = () => {
   const location = useLocation();
@@ -17,6 +18,9 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black transition-colors duration-300">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
       <div className="text-center bg-white dark:bg-gray-800 p-12 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 max-w-md">
         <h1 className="text-6xl font-bold mb-6 text-primary dark:text-white">404</h1>
         <p className="text-xl text-accent dark:text-gray-400 mb-8">Oops! Page not found</p>

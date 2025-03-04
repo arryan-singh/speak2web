@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Github, Mail, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -44,6 +45,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
       <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-800 animate-fade-in">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
