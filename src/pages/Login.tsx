@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { GitHub, Mail, Google, ArrowLeft } from "lucide-react";
+import { Github, Mail, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 
@@ -57,22 +57,14 @@ const Login = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Button 
               variant="outline" 
               className="flex items-center justify-center gap-2"
-              onClick={() => handleSocialLogin("Google")}
+              onClick={() => handleSocialLogin("Github")}
             >
-              <Google className="h-4 w-4" />
-              <span className="sr-only md:not-sr-only md:text-xs">Google</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center gap-2"
-              onClick={() => handleSocialLogin("GitHub")}
-            >
-              <GitHub className="h-4 w-4" />
-              <span className="sr-only md:not-sr-only md:text-xs">GitHub</span>
+              <Github className="h-4 w-4" />
+              <span className="sr-only md:not-sr-only md:text-xs">Github</span>
             </Button>
             <Button 
               variant="outline" 
