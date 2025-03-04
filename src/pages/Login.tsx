@@ -52,12 +52,12 @@ const Login = () => {
       <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-800 animate-fade-in">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-3xl font-bold">Sign in</CardTitle>
-            <Link to="/" className="text-accent hover:text-primary transition-colors">
+            <CardTitle className="text-3xl font-bold text-primary dark:text-white">Sign in</CardTitle>
+            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white">
               <ArrowLeft size={20} />
             </Link>
           </div>
-          <CardDescription>
+          <CardDescription className="dark:text-gray-300">
             Choose your preferred sign in method
           </CardDescription>
         </CardHeader>
@@ -65,7 +65,7 @@ const Login = () => {
           <div className="grid grid-cols-2 gap-3">
             <Button 
               variant="outline" 
-              className="flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:border-gray-600"
               onClick={() => handleSocialLogin("Github")}
             >
               <Github className="h-4 w-4" />
@@ -73,7 +73,7 @@ const Login = () => {
             </Button>
             <Button 
               variant="outline" 
-              className="flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:border-gray-600"
               onClick={() => handleSocialLogin("Email")}
             >
               <Mail className="h-4 w-4" />
@@ -85,7 +85,7 @@ const Login = () => {
               <span className="w-full border-t border-gray-300 dark:border-gray-700" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-gray-900 px-2 text-text">
+              <span className="bg-white dark:bg-gray-900 px-2 text-text dark:text-gray-300">
                 Or continue with
               </span>
             </div>
@@ -93,21 +93,21 @@ const Login = () => {
           <form onSubmit={handleEmailLogin}>
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="dark:text-white">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="m@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white dark:bg-gray-800"
+                  className="bg-white dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-700"
                   required
                 />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link to="/forgot-password" className="text-sm text-accent hover:text-primary underline">
+                  <Label htmlFor="password" className="dark:text-white">Password</Label>
+                  <Link to="/forgot-password" className="text-sm text-accent hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 underline">
                     Forgot password?
                   </Link>
                 </div>
@@ -116,20 +116,24 @@ const Login = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white dark:bg-gray-800"
+                  className="bg-white dark:bg-gray-800 dark:text-white dark:border-gray-700"
                   required
                 />
               </div>
-              <Button className="w-full" type="submit" disabled={isLoading}>
+              <Button 
+                className="w-full bg-primary hover:bg-primary-dark text-white dark:bg-blue-600 dark:hover:bg-blue-700" 
+                type="submit" 
+                disabled={isLoading}
+              >
                 {isLoading ? "Signing in..." : "Sign in"}
               </Button>
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col items-center justify-center space-y-2">
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-sm text-muted-foreground dark:text-gray-400">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="underline text-accent hover:text-primary transition-colors">
+            <Link to="/signup" className="underline text-accent hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
               Sign up
             </Link>
           </div>

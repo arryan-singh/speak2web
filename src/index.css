@@ -136,6 +136,13 @@
     hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-primary/50 focus:outline-none;
 }
 
+/* Login button specific styles */
+.login-button {
+  @apply bg-primary text-white hover:bg-primary-dark dark:bg-blue-600 dark:hover:bg-blue-700 
+    dark:text-white px-4 py-2 rounded-lg font-medium shadow-md
+    transition-all duration-200 border-0;
+}
+
 /* Keep existing card styles */
 .custom-card {
   @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6
