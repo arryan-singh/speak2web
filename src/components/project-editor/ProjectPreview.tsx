@@ -26,25 +26,25 @@ const ProjectPreview: React.FC = () => {
           </div>
           
           {/* Preview content */}
-          <div className="flex-1 p-8 overflow-auto">
+          <div className="flex-1 p-8 overflow-auto bg-white dark:bg-gray-800">
             <div className="text-center max-w-2xl mx-auto">
               <h3 className="text-2xl font-semibold text-primary dark:text-white mb-4">Project Structure</h3>
               <p className="text-accent dark:text-gray-400 mb-8">Your project changes will appear here in real-time</p>
               
-              <div className="grid grid-cols-2 gap-6 mt-8">
-                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
                   <h4 className="font-medium text-primary dark:text-white text-lg mb-2">Components</h4>
                   <p className="text-sm text-accent dark:text-gray-400">Core building blocks</p>
                 </Card>
-                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
                   <h4 className="font-medium text-primary dark:text-white text-lg mb-2">Assets</h4>
                   <p className="text-sm text-accent dark:text-gray-400">Media & resources</p>
                 </Card>
-                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
                   <h4 className="font-medium text-primary dark:text-white text-lg mb-2">Styling</h4>
                   <p className="text-sm text-accent dark:text-gray-400">Design elements</p>
                 </Card>
-                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800">
+                <Card className="p-6 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
                   <h4 className="font-medium text-primary dark:text-white text-lg mb-2">Logic</h4>
                   <p className="text-sm text-accent dark:text-gray-400">Functional code</p>
                 </Card>
