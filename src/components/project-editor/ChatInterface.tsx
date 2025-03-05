@@ -126,7 +126,7 @@ const ChatInterface = () => {
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 dark:bg-background-darker bg-slate-900">
         <div className="flex items-center gap-2">
           <Link to="/">
-            <Button variant="outline" size="icon" className="border-gray-200 dark:border-gray-700 text-primary bg-slate-700 hover:bg-slate-600">
+            <Button variant="outline" size="icon" className="border-gray-200 dark:border-gray-700 text-primary hover:bg-gray-50 dark:hover:bg-gray-800">
               <ArrowLeft size={18} />
             </Button>
           </Link>
