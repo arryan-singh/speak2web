@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff, Send } from "lucide-react";
@@ -21,7 +22,7 @@ const InputArea: React.FC<InputAreaProps> = ({
       handleSend();
     }
   };
-  return <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50">
+  return <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800">
       <div className="relative">
         <textarea value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={handleKeyPress} className="w-full p-4 pr-24 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all" placeholder="Type your message..." rows={3} />
         <div className="absolute bottom-3 right-3 flex gap-2">
