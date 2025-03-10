@@ -26,6 +26,7 @@ const ChatInterface = () => {
   }]);
   const [inputValue, setInputValue] = useState("");
   const [geminiApiKey, setGeminiApiKey] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Handle scrolling to bottom when messages update
@@ -99,7 +100,7 @@ const ChatInterface = () => {
   };
 
   const handleSend = async (content = inputValue) => {
-    if (!content.trim()) return;
+    if (!content.trim() || isProcessing) return;
 
     // Add user message
     setMessages(prev => [...prev, {
@@ -107,6 +108,7 @@ const ChatInterface = () => {
       content
     }]);
     setInputValue("");
+    setIsProcessing(true);
 
     // Add processing message for AI
     setMessages(prev => [...prev, {
@@ -144,7 +146,7 @@ const ChatInterface = () => {
             // Replace processing message with default response
             newMessages[lastIndex] = {
               type: 'ai',
-              content: `I'm processing your request: "${content}". To enable AI responses, please set up your Gemini API key.`
+              content: `Please set up your Gemini API key in the configuration panel above to enable AI responses.`
             };
             return newMessages;
           });
@@ -171,11 +173,22 @@ const ChatInterface = () => {
         };
         return newMessages;
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const handleApiKeySet = (apiKey: string) => {
     setGeminiApiKey(apiKey);
+    if (apiKey && messages.length === 1) {
+      // If this is the first message and we just got an API key, send a welcome message
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          type: 'ai',
+          content: 'Thanks for setting up your API key! I can now provide intelligent responses to help with your project. What would you like assistance with today?'
+        }]);
+      }, 500);
+    }
   };
 
   return (
@@ -212,6 +225,7 @@ const ChatInterface = () => {
         isListening={isListening} 
         toggleListening={toggleListening} 
         handleSend={() => handleSend()} 
+        isProcessing={isProcessing}
       />
     </div>
   );
