@@ -119,7 +119,7 @@ const ChatInterface = () => {
       // If Gemini API key is set, use Gemini API
       if (geminiApiKey) {
         // Only send the last few messages to avoid token limits
-        const recentMessages = [...messages.slice(-5), { type: 'user', content }];
+        const recentMessages = [...messages.slice(-5), { type: 'user' as const, content }];
         
         const response = await sendMessageToGemini(geminiApiKey, recentMessages);
         
