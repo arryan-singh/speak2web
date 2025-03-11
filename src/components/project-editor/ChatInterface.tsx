@@ -29,6 +29,14 @@ const ChatInterface = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // On component mount, check for stored API key
+  useEffect(() => {
+    const storedKey = localStorage.getItem("gemini_api_key");
+    if (storedKey) {
+      setGeminiApiKey(storedKey);
+    }
+  }, []);
+
   // Handle scrolling to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -68,7 +76,11 @@ const ChatInterface = () => {
     }
     return () => {
       if (recognition) {
-        recognition.stop();
+        try {
+          recognition.stop();
+        } catch (error) {
+          console.error("Error stopping recognition:", error);
+        }
       }
     };
   }, []);
@@ -90,12 +102,21 @@ const ChatInterface = () => {
       });
     } else {
       setTranscript("");
-      recognition.start();
-      setIsListening(true);
-      toast({
-        title: "Voice Recognition Active",
-        description: "Speak clearly into your microphone."
-      });
+      try {
+        recognition.start();
+        setIsListening(true);
+        toast({
+          title: "Voice Recognition Active",
+          description: "Speak clearly into your microphone."
+        });
+      } catch (error) {
+        console.error("Error starting speech recognition:", error);
+        toast({
+          title: "Speech Recognition Error",
+          description: "Failed to start speech recognition. Please try again.",
+          variant: "destructive"
+        });
+      }
     }
   };
 
@@ -120,11 +141,15 @@ const ChatInterface = () => {
     try {
       // If Gemini API key is set, use Gemini API
       if (geminiApiKey) {
+        console.log("Sending message to Gemini with API key:", geminiApiKey ? "API key exists" : "No API key");
+        
         // Only send the last few messages to avoid token limits
         const recentMessages = [...messages.slice(-5), { type: 'user' as const, content }];
         
         const response = await sendMessageToGemini(geminiApiKey, recentMessages);
+        console.log("Received response:", response);
         
+        // Update the last message with the AI response
         setMessages(prev => {
           const newMessages = [...prev];
           const lastIndex = newMessages.length - 1;
@@ -137,6 +162,7 @@ const ChatInterface = () => {
           return newMessages;
         });
       } else {
+        console.warn("No API key available for Gemini");
         // Fallback to default response if no API key
         setTimeout(() => {
           setMessages(prev => {
@@ -180,6 +206,8 @@ const ChatInterface = () => {
 
   const handleApiKeySet = (apiKey: string) => {
     setGeminiApiKey(apiKey);
+    console.log("API key set:", apiKey ? "API key exists" : "No API key");
+    
     if (apiKey && messages.length === 1) {
       // If this is the first message and we just got an API key, send a welcome message
       setTimeout(() => {
@@ -207,7 +235,7 @@ const ChatInterface = () => {
       
       {/* API Key Input Section */}
       <div className="px-4 pt-4">
-        <ApiKeyInput onApiKeySet={handleApiKeySet} />
+        <ApiKeyInput onApiKeySet={handleApiKeySet} initialApiKey={geminiApiKey} />
       </div>
       
       <MessageList messages={messages} messagesEndRef={messagesEndRef} />

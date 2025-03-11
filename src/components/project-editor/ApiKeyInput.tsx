@@ -6,11 +6,12 @@ import { toast } from "@/components/ui/use-toast";
 
 interface ApiKeyInputProps {
   onApiKeySet: (apiKey: string) => void;
+  initialApiKey?: string;
 }
 
-const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet }) => {
+const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = "" }) => {
   const [apiKey, setApiKey] = useState<string>("");
-  const [savedKey, setSavedKey] = useState<string | null>(null);
+  const [savedKey, setSavedKey] = useState<string | null>(initialApiKey || null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   // Check if API key is stored in localStorage on component mount
@@ -24,6 +25,14 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet }) => {
     }
   }, [onApiKeySet]);
 
+  // Also update if initialApiKey changes
+  useEffect(() => {
+    if (initialApiKey && !savedKey) {
+      setSavedKey(initialApiKey);
+      setIsVisible(false);
+    }
+  }, [initialApiKey, savedKey]);
+
   const handleSaveApiKey = () => {
     if (!apiKey.trim()) {
       toast({
@@ -34,31 +43,49 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet }) => {
       return;
     }
 
-    // Store API key in localStorage
-    localStorage.setItem("gemini_api_key", apiKey);
-    setSavedKey(apiKey);
-    onApiKeySet(apiKey);
-    setIsVisible(false); // Hide the form after saving
-    
-    toast({
-      title: "Success",
-      description: "Gemini API key saved",
-    });
+    try {
+      // Store API key in localStorage
+      localStorage.setItem("gemini_api_key", apiKey);
+      setSavedKey(apiKey);
+      onApiKeySet(apiKey);
+      setIsVisible(false); // Hide the form after saving
+      
+      toast({
+        title: "Success",
+        description: "Gemini API key saved",
+      });
 
-    // Clear input field after saving
-    setApiKey("");
+      // Clear input field after saving
+      setApiKey("");
+    } catch (error) {
+      console.error("Error saving API key:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save API key. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleClearApiKey = () => {
-    localStorage.removeItem("gemini_api_key");
-    setSavedKey(null);
-    onApiKeySet("");
-    setIsVisible(true); // Show the form again after clearing
-    
-    toast({
-      title: "Success",
-      description: "Gemini API key removed",
-    });
+    try {
+      localStorage.removeItem("gemini_api_key");
+      setSavedKey(null);
+      onApiKeySet("");
+      setIsVisible(true); // Show the form again after clearing
+      
+      toast({
+        title: "Success",
+        description: "Gemini API key removed",
+      });
+    } catch (error) {
+      console.error("Error clearing API key:", error);
+      toast({
+        title: "Error",
+        description: "Failed to clear API key. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleVisibility = () => {

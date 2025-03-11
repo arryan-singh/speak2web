@@ -36,15 +36,22 @@ export const sendMessageToGemini = async (
   apiKey: string,
   messages: { type: "user" | "ai"; content: string }[]
 ): Promise<string> => {
-  if (!apiKey) {
+  if (!apiKey || apiKey.trim() === "") {
     throw new Error("API key is required");
   }
 
   // Convert our message format to Gemini format
-  const geminiMessages: GeminiMessage[] = messages.map((msg) => ({
-    role: msg.type === "user" ? "user" : "model",
-    parts: [{ text: msg.content }],
-  }));
+  const geminiMessages: GeminiMessage[] = messages
+    .filter(msg => msg.content.trim() !== '') // Filter out empty messages
+    .map((msg) => ({
+      role: msg.type === "user" ? "user" : "model",
+      parts: [{ text: msg.content }],
+    }));
+
+  // Make sure there's at least one message
+  if (geminiMessages.length === 0) {
+    throw new Error("No valid messages to send");
+  }
 
   const requestBody: GeminiRequest = {
     contents: geminiMessages,
@@ -53,6 +60,8 @@ export const sendMessageToGemini = async (
       maxOutputTokens: 2048,
     },
   };
+
+  console.log("Request to Gemini:", JSON.stringify(requestBody, null, 2));
 
   try {
     // Make API request with appropriate timeout
@@ -73,10 +82,29 @@ export const sendMessageToGemini = async (
     
     clearTimeout(timeoutId);
 
+    // Check HTTP status before parsing JSON
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API HTTP error:", response.status, errorText);
+      
+      // Handle specific HTTP errors
+      if (response.status === 400) {
+        throw new Error("Invalid request format. Please check your message and try again.");
+      } else if (response.status === 401 || response.status === 403) {
+        throw new Error("API key is invalid or unauthorized. Please check your Gemini API key.");
+      } else if (response.status === 429) {
+        throw new Error("Rate limit exceeded. Please try again later.");
+      } else {
+        throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+      }
+    }
+
     const data: GeminiResponse = await response.json();
+    console.log("Gemini response data:", JSON.stringify(data, null, 2));
     
     // Check if the response contains an error
     if (data.error) {
+      console.error("Gemini API response error:", data.error);
       throw new Error(`Gemini API error: ${data.error.message || 'Unknown error'}`);
     }
     
@@ -85,29 +113,32 @@ export const sendMessageToGemini = async (
       throw new Error(`Response blocked: ${data.promptFeedback.blockReason}`);
     }
 
-    // Check HTTP status
-    if (!response.ok) {
-      throw new Error(`Gemini API error: ${response.statusText}`);
-    }
-
     // Extract the response text
-    if (data.candidates && data.candidates.length > 0) {
+    if (data.candidates && data.candidates.length > 0 && 
+        data.candidates[0].content && 
+        data.candidates[0].content.parts && 
+        data.candidates[0].content.parts.length > 0) {
       return data.candidates[0].content.parts[0].text;
     } else {
+      console.error("Unexpected Gemini response format:", data);
       return "No response generated. Please try a different prompt.";
     }
   } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new Error("Request timed out. Please try again.");
     }
     
-    console.error("Error calling Gemini API:", error);
-    
     if (error instanceof Error) {
       // Check for common API key issues
-      if (error.message.includes('API key not valid')) {
+      const errorMsg = error.message.toLowerCase();
+      if (errorMsg.includes('api key') || 
+          errorMsg.includes('key') && (errorMsg.includes('invalid') || errorMsg.includes('unauthorized'))) {
         throw new Error("Invalid API key. Please check your Gemini API key and try again.");
       }
+      
+      // Return the original error
       throw error;
     }
     

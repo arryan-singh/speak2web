@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, MicOff, Send } from "lucide-react";
+import { Mic, MicOff, Send, Loader2 } from "lucide-react";
 
 interface InputAreaProps {
   inputValue: string;
@@ -35,7 +35,7 @@ const InputArea: React.FC<InputAreaProps> = ({
           onChange={e => setInputValue(e.target.value)} 
           onKeyDown={handleKeyPress} 
           className="w-full p-4 pr-24 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/30 transition-all" 
-          placeholder="Type your message..." 
+          placeholder={isProcessing ? "Waiting for response..." : "Type your message..."} 
           rows={3}
           disabled={isProcessing}
         />
@@ -55,7 +55,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             disabled={!inputValue.trim() || isProcessing}
             className="bg-primary hover:bg-primary-dark text-white dark:bg-blue-600 dark:hover:bg-blue-700 rounded-xl h-10 w-10 transition-colors"
           >
-            <Send size={18} />
+            {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </Button>
         </div>
       </div>
