@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { ExternalLink } from "lucide-react";
 
 interface ApiKeyInputProps {
   onApiKeySet: (apiKey: string) => void;
@@ -130,8 +131,23 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
           {isVisible && (
             <>
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                {savedKey ? "Manage your Gemini API key" : "Please enter your Gemini API key to enable AI responses"}
+                {savedKey 
+                  ? "Manage your Gemini API key" 
+                  : "Please enter your Gemini API key to enable AI responses"}
               </p>
+              <div className="text-xs text-gray-600 dark:text-gray-400 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md mb-3">
+                <p className="mb-2">
+                  <strong>Getting a Gemini API key:</strong>
+                </p>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center">
+                    Google AI Studio <ExternalLink className="ml-1 h-3 w-3" />
+                  </a></li>
+                  <li>Sign in with your Google account</li>
+                  <li>Create a new API key or use an existing one</li>
+                  <li>Copy the API key and paste it below</li>
+                </ol>
+              </div>
               <div className="flex gap-2">
                 <Input
                   type="password"
