@@ -181,21 +181,31 @@ const ChatInterface = () => {
     } catch (error) {
       console.error("Error processing message:", error);
       
-      // Show error toast
+      // Show error toast with more user-friendly message
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to process your message",
+        title: "AI Response Error",
+        description: error instanceof Error 
+          ? (error.message.includes("404") 
+              ? "There seems to be an issue with the Gemini API. Please check your API key and try again later." 
+              : error.message)
+          : "Failed to process your message. Please try again.",
         variant: "destructive"
       });
       
-      // Update the processing message to show error
+      // Update the processing message to show a more user-friendly error message
       setMessages(prev => {
         const newMessages = [...prev];
         const lastIndex = newMessages.length - 1;
         
+        const errorMessage = error instanceof Error 
+          ? (error.message.includes("404") 
+              ? "I'm having trouble connecting to the AI service right now. This could be due to:\n\n1. An incorrect API key\n2. A temporary service disruption\n\nPlease verify your API key and try again later." 
+              : error.message)
+          : "I encountered an error processing your request. Please try again.";
+          
         newMessages[lastIndex] = {
           type: 'ai',
-          content: `Sorry, I encountered an error: ${error instanceof Error ? error.message : "Unknown error"}`
+          content: errorMessage
         };
         return newMessages;
       });
