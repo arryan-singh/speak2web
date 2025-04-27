@@ -92,7 +92,7 @@ const Login = () => {
             <Button 
               variant="outline" 
               className="flex items-center justify-center gap-2 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:border-gray-600"
-              onClick={() => handleSocialLogin("Github")}
+              onClick={() => handleSocialLogin("github")}
             >
               <Github className="h-4 w-4" />
               <span className="sr-only md:not-sr-only md:text-xs">Github</span>
@@ -100,7 +100,7 @@ const Login = () => {
             <Button 
               variant="outline" 
               className="flex items-center justify-center gap-2 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:border-gray-600"
-              onClick={() => handleSocialLogin("Email")}
+              disabled
             >
               <Mail className="h-4 w-4" />
               <span className="sr-only md:not-sr-only md:text-xs">Email</span>
