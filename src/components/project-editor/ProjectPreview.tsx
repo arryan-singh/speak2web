@@ -4,14 +4,14 @@ import { Card } from "@/components/ui/card";
 
 const ProjectPreview: React.FC = () => {
   return (
-    <div className="h-full bg-background-darker dark:bg-gray-900 p-4 overflow-auto">
+    <div className="h-full bg-background-darker dark:bg-gray-900 p-4 overflow-auto flex flex-col">
       <div className="mb-4">
         <h1 className="text-2xl font-bold text-primary dark:text-white mb-1">Project Preview</h1>
         <p className="text-accent dark:text-gray-400 text-sm">Real-time preview of your project</p>
       </div>
       
       {/* Preview area */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm h-[calc(100%-80px)] overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-grow overflow-hidden">
         <div className="h-full flex flex-col">
           {/* Preview header */}
           <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-2 flex items-center">

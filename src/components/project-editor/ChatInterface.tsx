@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -29,7 +28,6 @@ const ChatInterface = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // On component mount, check for stored API key
   useEffect(() => {
     const storedKey = localStorage.getItem("gemini_api_key");
     if (storedKey) {
@@ -37,14 +35,12 @@ const ChatInterface = () => {
     }
   }, []);
 
-  // Handle scrolling to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth"
     });
   }, [messages]);
 
-  // Initialize speech recognition
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -91,7 +87,6 @@ const ChatInterface = () => {
       recognition.stop();
       setIsListening(false);
 
-      // If transcript has content, send it as a message
       if (transcript.trim()) {
         handleSend(transcript);
         setTranscript("");
@@ -123,7 +118,6 @@ const ChatInterface = () => {
   const handleSend = async (content = inputValue) => {
     if (!content.trim() || isProcessing) return;
 
-    // Add user message
     setMessages(prev => [...prev, {
       type: 'user',
       content
@@ -131,7 +125,6 @@ const ChatInterface = () => {
     setInputValue("");
     setIsProcessing(true);
 
-    // Add processing message for AI
     setMessages(prev => [...prev, {
       type: 'ai',
       content: '',
@@ -139,22 +132,18 @@ const ChatInterface = () => {
     }]);
 
     try {
-      // If Gemini API key is set, use Gemini API
       if (geminiApiKey) {
         console.log("Sending message to Gemini with API key:", geminiApiKey ? "API key exists" : "No API key");
         
-        // Only send the last few messages to avoid token limits
         const recentMessages = [...messages.slice(-5), { type: 'user' as const, content }];
         
         const response = await sendMessageToGemini(geminiApiKey, recentMessages);
         console.log("Received response:", response);
         
-        // Update the last message with the AI response
         setMessages(prev => {
           const newMessages = [...prev];
           const lastIndex = newMessages.length - 1;
           
-          // Replace processing message with actual response
           newMessages[lastIndex] = {
             type: 'ai',
             content: response
@@ -163,13 +152,11 @@ const ChatInterface = () => {
         });
       } else {
         console.warn("No API key available for Gemini");
-        // Fallback to default response if no API key
         setTimeout(() => {
           setMessages(prev => {
             const newMessages = [...prev];
             const lastIndex = newMessages.length - 1;
             
-            // Replace processing message with default response
             newMessages[lastIndex] = {
               type: 'ai',
               content: `Please set up your Gemini API key in the configuration panel above to enable AI responses.`
@@ -181,7 +168,6 @@ const ChatInterface = () => {
     } catch (error) {
       console.error("Error processing message:", error);
       
-      // Show error toast with more user-friendly message
       toast({
         title: "AI Response Error",
         description: error instanceof Error 
@@ -192,7 +178,6 @@ const ChatInterface = () => {
         variant: "destructive"
       });
       
-      // Update the processing message to show a more user-friendly error message
       setMessages(prev => {
         const newMessages = [...prev];
         const lastIndex = newMessages.length - 1;
@@ -219,7 +204,6 @@ const ChatInterface = () => {
     console.log("API key set:", apiKey ? "API key exists" : "No API key");
     
     if (apiKey && messages.length === 1) {
-      // If this is the first message and we just got an API key, send a welcome message
       setTimeout(() => {
         setMessages(prev => [...prev, {
           type: 'ai',
@@ -230,7 +214,7 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="w-1/4 flex flex-col border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-background-darker">
+    <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-background-darker">
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800">
         <div className="flex items-center gap-2">
           <Link to="/">
@@ -243,14 +227,12 @@ const ChatInterface = () => {
         <ThemeToggle />
       </div>
       
-      {/* API Key Input Section */}
       <div className="px-4 pt-4">
         <ApiKeyInput onApiKeySet={handleApiKeySet} initialApiKey={geminiApiKey} />
       </div>
       
       <MessageList messages={messages} messagesEndRef={messagesEndRef} />
       
-      {/* Voice transcript display */}
       {isListening && transcript && (
         <div className="mx-4 mb-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-primary/20 dark:border-gray-600 text-sm text-primary dark:text-white shadow-sm">
           {transcript}
