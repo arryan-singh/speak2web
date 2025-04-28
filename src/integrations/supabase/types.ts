@@ -9,6 +9,98 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_value: string
+          service_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_value: string
+          service_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_value?: string
+          service_name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          message_type: string
+          metadata: Json | null
+          project_id: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          message_type: string
+          metadata?: Json | null
+          project_id?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          message_type?: string
+          metadata?: Json | null
+          project_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      code_snippets: {
+        Row: {
+          chat_message_id: string | null
+          content: string
+          created_at: string
+          file_name: string
+          id: string
+          language: string
+          user_id: string
+        }
+        Insert: {
+          chat_message_id?: string | null
+          content: string
+          created_at?: string
+          file_name: string
+          id?: string
+          language: string
+          user_id: string
+        }
+        Update: {
+          chat_message_id?: string | null
+          content?: string
+          created_at?: string
+          file_name?: string
+          id?: string
+          language?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "code_snippets_chat_message_id_fkey"
+            columns: ["chat_message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

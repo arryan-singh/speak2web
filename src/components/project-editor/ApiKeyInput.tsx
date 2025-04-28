@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { ExternalLink } from "lucide-react";
+import { saveGeminiApiKey } from "@/services/geminiService";
 
 interface ApiKeyInputProps {
   onApiKeySet: (apiKey: string) => void;
@@ -34,7 +34,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
     }
   }, [initialApiKey, savedKey]);
 
-  const handleSaveApiKey = () => {
+  const handleSaveApiKey = async () => {
     if (!apiKey.trim()) {
       toast({
         title: "Error",
@@ -44,27 +44,12 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
       return;
     }
 
-    try {
-      // Store API key in localStorage
-      localStorage.setItem("gemini_api_key", apiKey);
+    const success = await saveGeminiApiKey(apiKey);
+    if (success) {
       setSavedKey(apiKey);
       onApiKeySet(apiKey);
-      setIsVisible(false); // Hide the form after saving
-      
-      toast({
-        title: "Success",
-        description: "Gemini API key saved",
-      });
-
-      // Clear input field after saving
+      setIsVisible(false);
       setApiKey("");
-    } catch (error) {
-      console.error("Error saving API key:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save API key. Please try again.",
-        variant: "destructive",
-      });
     }
   };
 

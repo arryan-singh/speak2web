@@ -1,3 +1,62 @@
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
+
+export const getGeminiApiKey = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data: apiKey, error } = await supabase
+    .from('api_keys')
+    .select('key_value')
+    .eq('service_name', 'gemini')
+    .eq('user_id', user.id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching Gemini API key:', error);
+    return null;
+  }
+
+  return apiKey?.key_value;
+};
+
+export const saveGeminiApiKey = async (apiKey: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    toast({
+      title: "Authentication Required",
+      description: "Please log in to save your API key.",
+      variant: "destructive"
+    });
+    return false;
+  }
+
+  const { error } = await supabase
+    .from('api_keys')
+    .upsert({
+      user_id: user.id,
+      service_name: 'gemini',
+      key_value: apiKey
+    }, {
+      onConflict: 'user_id,service_name'
+    });
+
+  if (error) {
+    console.error('Error saving Gemini API key:', error);
+    toast({
+      title: "Error",
+      description: "Failed to save API key. Please try again.",
+      variant: "destructive"
+    });
+    return false;
+  }
+
+  toast({
+    title: "Success",
+    description: "Gemini API key saved successfully."
+  });
+  return true;
+};
 
 interface GeminiMessage {
   role: "user" | "model";
