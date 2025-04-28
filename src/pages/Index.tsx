@@ -1,11 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Mic, MicOff, LogIn } from "lucide-react";
+import { ArrowRight, Mic, MicOff } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserMenu } from "@/components/UserMenu";
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
@@ -13,7 +13,6 @@ const Index = () => {
   const [recognition, setRecognition] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Initialize speech recognition
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -95,16 +94,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-6 md:p-12 transition-colors duration-300">
       <div className="absolute top-4 right-4 flex items-center gap-3">
         <ThemeToggle />
-        <Link to="/login">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex items-center gap-2 bg-primary text-white hover:bg-primary-dark dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white border-none font-medium shadow-sm"
-          >
-            <LogIn className="h-4 w-4" />
-            <span>Login</span>
-          </Button>
-        </Link>
+        <UserMenu />
       </div>
       
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
