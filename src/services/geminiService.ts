@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
@@ -148,11 +147,12 @@ export const sendMessageToGemini = async (
     });
   }
   
-  // Add user messages
-  const userMessages = messages
+  // Add user messages - convert from our internal format to Gemini format
+  const userMessages: GeminiMessage[] = messages
     .filter(msg => msg.content.trim() !== '') // Filter out empty messages
     .map((msg) => ({
-      role: msg.type === "user" ? "user" : "model",
+      // Fixed: Use a type assertion to ensure role is correctly typed as "user" | "model"
+      role: (msg.type === "user" ? "user" : "model") as "user" | "model",
       parts: [{ text: msg.content }],
     }));
   
