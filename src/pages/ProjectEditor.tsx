@@ -5,7 +5,7 @@ import ProjectPreview from "@/components/project-editor/ProjectPreview";
 
 const ProjectEditor = () => {
   return (
-    <div className="flex h-screen overflow-hidden bg-background dark:bg-background text-text dark:text-white">
+    <div className="flex h-screen overflow-hidden bg-background dark:bg-gray-900 text-text dark:text-white">
       <ResizablePanelGroup direction="horizontal" className="w-full">
         <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
           <ChatInterface />

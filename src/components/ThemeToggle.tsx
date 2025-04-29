@@ -16,7 +16,7 @@ export const ThemeToggle = () => {
         checked={isDark}
         onCheckedChange={toggleTheme}
         aria-label="Toggle theme"
-        className="data-[state=checked]:bg-gray-600"
+        className="data-[state=checked]:bg-blue-600"
       />
       <Moon className={`h-4 w-4 ${isDark ? 'text-blue-300' : 'text-gray-400'}`} />
     </div>

@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -214,11 +215,11 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-background-darker">
+    <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-900">
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800">
         <div className="flex items-center gap-2">
           <Link to="/">
-            <Button variant="outline" size="icon" className="border-gray-200 dark:border-gray-700 text-primary hover:bg-gray-50 dark:hover:bg-gray-700">
+            <Button variant="outline" size="icon" className="border-gray-200 dark:border-gray-700 text-primary dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800">
               <ArrowLeft size={18} />
             </Button>
           </Link>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,12 +83,13 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
     <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl mb-4 bg-white dark:bg-gray-800">
       {savedKey && !isVisible ? (
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium text-primary dark:text-white">Gemini API Configuration</h3>
             <Button 
               variant="outline" 
               size="sm" 
               onClick={toggleVisibility}
+              className="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:border-gray-600"
             >
               {isVisible ? "Hide" : "Configure"}
             </Button>
@@ -107,6 +109,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
                 variant="outline" 
                 size="sm" 
                 onClick={toggleVisibility}
+                className="dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 dark:border-gray-600"
               >
                 {isVisible ? "Hide" : "Configure"}
               </Button>
@@ -139,16 +142,21 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="Enter your Gemini API key"
-                  className="flex-1"
+                  className="flex-1 dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 />
-                <Button onClick={handleSaveApiKey}>Save</Button>
+                <Button 
+                  onClick={handleSaveApiKey}
+                  className="dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
+                >
+                  Save
+                </Button>
               </div>
               {savedKey && (
                 <Button 
                   variant="destructive" 
                   size="sm"
                   onClick={handleClearApiKey}
-                  className="mt-2"
+                  className="mt-2 dark:bg-red-900 dark:hover:bg-red-800"
                 >
                   Clear API Key
                 </Button>

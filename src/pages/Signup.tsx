@@ -74,11 +74,11 @@ const Signup = () => {
         <ThemeToggle />
       </div>
       
-      <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-800 animate-fade-in">
+      <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-700 dark:bg-gray-800 animate-fade-in">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
             <CardTitle className="text-3xl font-bold text-primary dark:text-white">Sign up</CardTitle>
-            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white">
+            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white dark:text-gray-300">
               <ArrowLeft size={20} />
             </Link>
           </div>
@@ -97,7 +97,7 @@ const Signup = () => {
                   placeholder="johndoe"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="bg-white dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-700"
+                  className="bg-white dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-600"
                   required
                   minLength={3}
                 />
@@ -110,7 +110,7 @@ const Signup = () => {
                   placeholder="m@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-700"
+                  className="bg-white dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-600"
                   required
                 />
               </div>
@@ -121,7 +121,7 @@ const Signup = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                  className="bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   required
                 />
               </div>

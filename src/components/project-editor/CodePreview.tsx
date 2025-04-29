@@ -18,7 +18,7 @@ const CodePreview: React.FC<CodePreviewProps> = ({ code, language, fileName }) =
         </span>
       </div>
       <pre className="overflow-x-auto p-4 bg-gray-50 dark:bg-gray-900 rounded">
-        <code className="text-sm font-mono">{code}</code>
+        <code className="text-sm font-mono text-gray-800 dark:text-gray-200">{code}</code>
       </pre>
     </Card>
   );

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,11 +75,11 @@ const Login = () => {
         <ThemeToggle />
       </div>
       
-      <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-800 animate-fade-in">
+      <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-700 dark:bg-gray-800 animate-fade-in">
         <CardHeader className="space-y-1">
           <div className="flex items-center justify-between">
             <CardTitle className="text-3xl font-bold text-primary dark:text-white">Sign in</CardTitle>
-            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white">
+            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white dark:text-gray-300">
               <ArrowLeft size={20} />
             </Link>
           </div>
@@ -112,7 +113,7 @@ const Login = () => {
               <span className="w-full border-t border-gray-300 dark:border-gray-700" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-gray-900 px-2 text-text dark:text-gray-300">
+              <span className="bg-white dark:bg-gray-800 px-2 text-text dark:text-gray-300">
                 Or continue with
               </span>
             </div>
@@ -127,7 +128,7 @@ const Login = () => {
                   placeholder="m@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-700"
+                  className="bg-white dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-600"
                   required
                 />
               </div>
@@ -143,7 +144,7 @@ const Login = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white dark:bg-gray-800 dark:text-white dark:border-gray-700"
+                  className="bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   required
                 />
               </div>
