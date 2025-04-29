@@ -1,5 +1,6 @@
+
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Code } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { Link } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -7,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
 import ApiKeyInput from "./ApiKeyInput";
+import CodeGenerator from "./CodeGenerator";
 import { sendMessageToGemini } from "@/services/geminiService";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +33,7 @@ const ChatInterface = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [chatSessionId, setChatSessionId] = useState<string>("");
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [showCodeGenerator, setShowCodeGenerator] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
 
@@ -309,6 +312,10 @@ const ChatInterface = () => {
     }
   };
 
+  const toggleCodeGenerator = () => {
+    setShowCodeGenerator(prev => !prev);
+  };
+
   if (isLoadingHistory) {
     return (
       <div className="flex flex-col h-full items-center justify-center text-primary dark:text-white">
@@ -328,29 +335,46 @@ const ChatInterface = () => {
           </Link>
           <h2 className="text-xl font-semibold text-primary dark:text-white">Project Assistant</h2>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className={`border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-800 ${showCodeGenerator ? 'bg-primary/10' : ''}`}
+            onClick={toggleCodeGenerator}
+            title="Code Generator"
+          >
+            <Code size={18} className="text-primary dark:text-white" />
+          </Button>
+          <ThemeToggle />
+        </div>
       </div>
       
       <div className="px-4 pt-4">
         <ApiKeyInput onApiKeySet={handleApiKeySet} initialApiKey={geminiApiKey} />
       </div>
       
-      <MessageList messages={messages} messagesEndRef={messagesEndRef} />
-      
-      {isListening && transcript && (
-        <div className="mx-4 mb-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-primary/20 dark:border-gray-600 text-sm text-primary dark:text-white shadow-sm">
-          {transcript}
-        </div>
+      {showCodeGenerator ? (
+        <CodeGenerator />
+      ) : (
+        <>
+          <MessageList messages={messages} messagesEndRef={messagesEndRef} />
+          
+          {isListening && transcript && (
+            <div className="mx-4 mb-3 p-3 bg-white dark:bg-gray-700 rounded-lg border border-primary/20 dark:border-gray-600 text-sm text-primary dark:text-white shadow-sm">
+              {transcript}
+            </div>
+          )}
+          
+          <InputArea 
+            inputValue={inputValue} 
+            setInputValue={setInputValue} 
+            isListening={isListening} 
+            toggleListening={toggleListening} 
+            handleSend={() => handleSend()} 
+            isProcessing={isProcessing}
+          />
+        </>
       )}
-      
-      <InputArea 
-        inputValue={inputValue} 
-        setInputValue={setInputValue} 
-        isListening={isListening} 
-        toggleListening={toggleListening} 
-        handleSend={() => handleSend()} 
-        isProcessing={isProcessing}
-      />
     </div>
   );
 };

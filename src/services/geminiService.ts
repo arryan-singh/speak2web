@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
@@ -108,21 +109,54 @@ interface GeminiResponse {
   };
 }
 
+// System prompt for JSON code formatting
+const JSON_FORMAT_SYSTEM_PROMPT = `You are a code generation assistant that helps users build frontend UI components and pages. 
+When the user asks for UI components, respond ONLY with clean, executable frontend code in JSON format, containing three fields: html, css, and js.
+- Do not include any explanations, comments, or markdown formatting in your response.
+- Each field should contain raw code as a string.
+- Ensure the code works together when rendered in a single browser HTML page.
+- Keep the design responsive and minimal.
+Your response must be in this exact format:
+{
+  "html": "<!DOCTYPE html>\\n<html>...</html>",
+  "css": "body { ... }",
+  "js": "document.addEventListener(...);"
+}`;
+
 export const sendMessageToGemini = async (
   apiKey: string,
-  messages: { type: "user" | "ai"; content: string }[]
+  messages: { type: "user" | "ai"; content: string }[],
+  formatAsJson: boolean = false
 ): Promise<string> => {
   if (!apiKey || apiKey.trim() === "") {
     throw new Error("API key is required");
   }
 
   // Convert our message format to Gemini format
-  const geminiMessages: GeminiMessage[] = messages
+  let geminiMessages: GeminiMessage[] = [];
+  
+  // Add system prompt for JSON formatting if requested
+  if (formatAsJson) {
+    geminiMessages.push({
+      role: "user",
+      parts: [{ text: JSON_FORMAT_SYSTEM_PROMPT }]
+    });
+    // Add a separator to clearly indicate the system prompt is done
+    geminiMessages.push({
+      role: "model",
+      parts: [{ text: "I'll format my responses as JSON with html, css, and js fields." }]
+    });
+  }
+  
+  // Add user messages
+  const userMessages = messages
     .filter(msg => msg.content.trim() !== '') // Filter out empty messages
     .map((msg) => ({
       role: msg.type === "user" ? "user" : "model",
       parts: [{ text: msg.content }],
     }));
+  
+  geminiMessages = [...geminiMessages, ...userMessages];
 
   // Make sure there's at least one message
   if (geminiMessages.length === 0) {
@@ -132,8 +166,8 @@ export const sendMessageToGemini = async (
   const requestBody: GeminiRequest = {
     contents: geminiMessages,
     generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 2048,
+      temperature: formatAsJson ? 0.2 : 0.7, // Lower temperature for more predictable code generation
+      maxOutputTokens: formatAsJson ? 4096 : 2048, // Higher token limit for code generation
     },
   };
 
@@ -220,5 +254,46 @@ export const sendMessageToGemini = async (
     }
     
     throw new Error("Unknown error occurred while processing your request.");
+  }
+};
+
+// Helper function for generating code in JSON format
+export const generateCodeAsJson = async (
+  apiKey: string,
+  prompt: string
+): Promise<{ html: string; css: string; js: string } | null> => {
+  try {
+    const response = await sendMessageToGemini(
+      apiKey, 
+      [{ type: "user", content: prompt }],
+      true // Format as JSON
+    );
+    
+    try {
+      const jsonResponse = JSON.parse(response);
+      
+      // Validate that the response has the expected structure
+      if (
+        typeof jsonResponse.html === 'string' &&
+        typeof jsonResponse.css === 'string' &&
+        typeof jsonResponse.js === 'string'
+      ) {
+        return jsonResponse;
+      } else {
+        console.error("Invalid JSON structure from Gemini:", jsonResponse);
+        return null;
+      }
+    } catch (e) {
+      console.error("Failed to parse JSON from Gemini response:", e);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error generating code as JSON:", error);
+    toast({
+      title: "Code Generation Error",
+      description: error instanceof Error ? error.message : "Failed to generate code",
+      variant: "destructive"
+    });
+    return null;
   }
 };
