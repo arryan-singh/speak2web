@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { ExternalLink } from "lucide-react";
-import { saveGeminiApiKey } from "@/services/geminiService";
+import { saveGeminiApiKey, getGeminiApiKey } from "@/services/geminiService";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ApiKeyInputProps {
   onApiKeySet: (apiKey: string) => void;
@@ -15,17 +16,46 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
   const [apiKey, setApiKey] = useState<string>("");
   const [savedKey, setSavedKey] = useState<string | null>(initialApiKey || null);
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { user } = useAuth();
 
-  // Check if API key is stored in localStorage on component mount
+  // Check if API key is stored in database or localStorage on component mount
   useEffect(() => {
-    const storedKey = localStorage.getItem("gemini_api_key");
-    if (storedKey) {
-      setSavedKey(storedKey);
-      onApiKeySet(storedKey);
-    } else {
-      setIsVisible(true); // Only show the form if there's no saved key
-    }
-  }, [onApiKeySet]);
+    const checkApiKey = async () => {
+      setIsLoading(true);
+      
+      // Try to get API key from database first if user is logged in
+      if (user) {
+        try {
+          const dbKey = await getGeminiApiKey();
+          if (dbKey) {
+            setSavedKey(dbKey);
+            onApiKeySet(dbKey);
+            setIsVisible(false);
+            // Also store in localStorage for quick access
+            localStorage.setItem("gemini_api_key", dbKey);
+            setIsLoading(false);
+            return;
+          }
+        } catch (error) {
+          console.error("Error fetching API key from database:", error);
+        }
+      }
+      
+      // Fallback to localStorage
+      const storedKey = localStorage.getItem("gemini_api_key");
+      if (storedKey) {
+        setSavedKey(storedKey);
+        onApiKeySet(storedKey);
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+      setIsLoading(false);
+    };
+
+    checkApiKey();
+  }, [user, onApiKeySet]);
 
   // Also update if initialApiKey changes
   useEffect(() => {
@@ -49,12 +79,15 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
     if (success) {
       setSavedKey(apiKey);
       onApiKeySet(apiKey);
-      setIsVisible(false);
+      setIsVisible(false); // Auto-hide the form after successful submission
       setApiKey("");
+      
+      // Store in localStorage for non-authenticated users or quicker access
+      localStorage.setItem("gemini_api_key", apiKey);
     }
   };
 
-  const handleClearApiKey = () => {
+  const handleClearApiKey = async () => {
     try {
       localStorage.removeItem("gemini_api_key");
       setSavedKey(null);
@@ -78,6 +111,14 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl mb-4 bg-white dark:bg-gray-800">
+        <div className="text-center text-sm">Loading API configuration...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl mb-4 bg-white dark:bg-gray-800">
@@ -167,7 +208,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialApiKey = 
       )}
       
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-        Note: Your API key is stored in your browser's local storage.
+        {user ? "Your API key is stored securely in your account." : "Your API key is stored in your browser's local storage."}
       </p>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -9,6 +8,9 @@ import MessageList from "./MessageList";
 import InputArea from "./InputArea";
 import ApiKeyInput from "./ApiKeyInput";
 import { sendMessageToGemini } from "@/services/geminiService";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from 'uuid';
 
 export type Message = {
   type: 'user' | 'ai';
@@ -27,14 +29,91 @@ const ChatInterface = () => {
   const [inputValue, setInputValue] = useState("");
   const [geminiApiKey, setGeminiApiKey] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [chatSessionId, setChatSessionId] = useState<string>("");
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
+    // Generate a session ID for this chat session if we don't have one
+    if (!chatSessionId) {
+      setChatSessionId(uuidv4());
+    }
+
     const storedKey = localStorage.getItem("gemini_api_key");
     if (storedKey) {
       setGeminiApiKey(storedKey);
     }
-  }, []);
+
+    // If user is authenticated, load their chat history
+    if (user && chatSessionId) {
+      loadChatHistory();
+    } else {
+      setIsLoadingHistory(false);
+    }
+  }, [user, chatSessionId]);
+
+  // Load chat history from the database
+  const loadChatHistory = async () => {
+    if (!user || !chatSessionId) {
+      setIsLoadingHistory(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('chat_history')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('chat_session_id', chatSessionId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Error loading chat history:', error);
+        setIsLoadingHistory(false);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Convert database records to Message objects
+        const loadedMessages = data.map(record => ({
+          type: record.message_type as 'user' | 'ai',
+          content: record.content
+        }));
+        
+        // Only replace messages if we have history and this is the initial load
+        if (messages.length === 1 && messages[0].type === 'ai') {
+          setMessages(loadedMessages);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  // Save a message to the database
+  const saveChatMessage = async (message: Message) => {
+    if (!user || !chatSessionId) return;
+
+    try {
+      const { error } = await supabase
+        .from('chat_history')
+        .insert({
+          user_id: user.id,
+          chat_session_id: chatSessionId,
+          message_type: message.type,
+          content: message.content
+        });
+
+      if (error) {
+        console.error('Error saving chat message:', error);
+      }
+    } catch (error) {
+      console.error('Error saving chat message:', error);
+    }
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -119,13 +198,19 @@ const ChatInterface = () => {
   const handleSend = async (content = inputValue) => {
     if (!content.trim() || isProcessing) return;
 
-    setMessages(prev => [...prev, {
+    const userMessage: Message = {
       type: 'user',
       content
-    }]);
+    };
+
+    setMessages(prev => [...prev, userMessage]);
     setInputValue("");
     setIsProcessing(true);
 
+    // Save user message to database
+    await saveChatMessage(userMessage);
+
+    // Show processing message
     setMessages(prev => [...prev, {
       type: 'ai',
       content: '',
@@ -141,16 +226,21 @@ const ChatInterface = () => {
         const response = await sendMessageToGemini(geminiApiKey, recentMessages);
         console.log("Received response:", response);
         
+        const aiMessage: Message = {
+          type: 'ai',
+          content: response
+        };
+        
         setMessages(prev => {
           const newMessages = [...prev];
           const lastIndex = newMessages.length - 1;
           
-          newMessages[lastIndex] = {
-            type: 'ai',
-            content: response
-          };
+          newMessages[lastIndex] = aiMessage;
           return newMessages;
         });
+        
+        // Save AI response to database
+        await saveChatMessage(aiMessage);
       } else {
         console.warn("No API key available for Gemini");
         setTimeout(() => {
@@ -206,13 +296,26 @@ const ChatInterface = () => {
     
     if (apiKey && messages.length === 1) {
       setTimeout(() => {
-        setMessages(prev => [...prev, {
+        const welcomeMessage: Message = {
           type: 'ai',
           content: 'Thanks for setting up your API key! I can now provide intelligent responses to help with your project. What would you like assistance with today?'
-        }]);
+        };
+        
+        setMessages(prev => [...prev, welcomeMessage]);
+        
+        // Save this welcome message to the database
+        saveChatMessage(welcomeMessage);
       }, 500);
     }
   };
+
+  if (isLoadingHistory) {
+    return (
+      <div className="flex flex-col h-full items-center justify-center text-primary dark:text-white">
+        <p>Loading your chat history...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-900">

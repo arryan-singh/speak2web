@@ -6,12 +6,14 @@ import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserMenu } from "@/components/UserMenu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [recognition, setRecognition] = useState<any>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
@@ -82,6 +84,17 @@ const Index = () => {
 
   const handleCommand = (command: string) => {
     if (command === "create" || command === "edit") {
+      // Check if user is authenticated before navigation
+      if (!user) {
+        toast({
+          title: "Authentication Required",
+          description: `You need to login before you can ${command === "create" ? "create" : "edit"} a project.`,
+          variant: "destructive"
+        });
+        navigate("/login");
+        return;
+      }
+      
       toast({
         title: "Command Recognized",
         description: `${command === "create" ? "Creating" : "Editing"} project...`
@@ -154,13 +167,16 @@ const Index = () => {
           </Card>
 
           <Card 
-            className="p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-primary/10 dark:border-white/5 rounded-xl cursor-pointer animate-fade-in shadow-sm"
+            className={`p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-primary/10 dark:border-white/5 rounded-xl cursor-pointer animate-fade-in shadow-sm ${!user ? 'opacity-70' : ''}`}
             style={{ animationDelay: "0.4s" }}
             onClick={() => handleCommand("edit")}
           >
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-semibold text-primary dark:text-white mb-2">Edit Project</h2>
+                <h2 className="text-2xl font-semibold text-primary dark:text-white mb-2">
+                  Edit Project
+                  {!user && <span className="ml-2 text-sm font-normal text-gray-500 dark:text-gray-400">(Login required)</span>}
+                </h2>
                 <p className="text-accent dark:text-gray-400 mt-2">Continue working on existing projects</p>
               </div>
               <div className="bg-lavender dark:bg-gray-700 p-3 rounded-full">
