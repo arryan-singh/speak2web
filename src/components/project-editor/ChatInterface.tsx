@@ -62,10 +62,10 @@ const ChatInterface = () => {
 
     try {
       const { data, error } = await supabase
-        .from('chat_history')
+        .from('chat_messages')
         .select('*')
         .eq('user_id', user.id)
-        .eq('chat_session_id', chatSessionId)
+        .eq('project_id', chatSessionId)
         .order('created_at', { ascending: true });
 
       if (error) {
@@ -99,10 +99,10 @@ const ChatInterface = () => {
 
     try {
       const { error } = await supabase
-        .from('chat_history')
+        .from('chat_messages')
         .insert({
           user_id: user.id,
-          chat_session_id: chatSessionId,
+          project_id: chatSessionId,
           message_type: message.type,
           content: message.content
         });
