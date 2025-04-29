@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
@@ -125,7 +126,8 @@ Your response must be in this exact format:
 export const sendMessageToGemini = async (
   apiKey: string,
   messages: { type: "user" | "ai"; content: string }[],
-  formatAsJson: boolean = false
+  formatAsJson: boolean = false,
+  retryCount: number = 0
 ): Promise<string> => {
   if (!apiKey || apiKey.trim() === "") {
     throw new Error("API key is required");
@@ -151,7 +153,7 @@ export const sendMessageToGemini = async (
   const userMessages: GeminiMessage[] = messages
     .filter(msg => msg.content.trim() !== '') // Filter out empty messages
     .map((msg) => ({
-      // Fixed: Use a type assertion to ensure role is correctly typed as "user" | "model"
+      // Use a type assertion to ensure role is correctly typed as "user" | "model"
       role: (msg.type === "user" ? "user" : "model") as "user" | "model",
       parts: [{ text: msg.content }],
     }));
@@ -178,7 +180,7 @@ export const sendMessageToGemini = async (
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
     
-    // Updated to use gemini-2.0-flash model
+    // Use gemini-2.0-flash model
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
@@ -193,10 +195,19 @@ export const sendMessageToGemini = async (
     
     clearTimeout(timeoutId);
 
-    // Check HTTP status before parsing JSON
+    // Enhanced error handling for 503 and other errors
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Gemini API HTTP error:", response.status, errorText);
+      
+      // Handle Service Unavailable (503) with retry
+      if (response.status === 503 && retryCount < 3) {
+        console.log(`Retrying request (attempt ${retryCount + 1}/3) after 503 error`);
+        // Exponential backoff: wait longer between each retry
+        const delay = Math.pow(2, retryCount) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        return sendMessageToGemini(apiKey, messages, formatAsJson, retryCount + 1);
+      }
       
       // Handle specific HTTP errors
       if (response.status === 400) {
@@ -205,6 +216,8 @@ export const sendMessageToGemini = async (
         throw new Error("API key is invalid or unauthorized. Please check your Gemini API key.");
       } else if (response.status === 429) {
         throw new Error("Rate limit exceeded. Please try again later.");
+      } else if (response.status === 503) {
+        throw new Error("Gemini API service is temporarily unavailable. Please try again later.");
       } else {
         throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
       }
@@ -263,9 +276,14 @@ export const generateCodeAsJson = async (
   prompt: string
 ): Promise<{ html: string; css: string; js: string } | null> => {
   try {
+    // Replace {{USER_INPUT}} with the actual prompt if present
+    const formattedPrompt = JSON_FORMAT_SYSTEM_PROMPT.includes("{{USER_INPUT}}") 
+      ? JSON_FORMAT_SYSTEM_PROMPT.replace(/{{USER_INPUT}}/g, prompt)
+      : prompt;
+    
     const response = await sendMessageToGemini(
       apiKey, 
-      [{ type: "user", content: prompt }],
+      [{ type: "user", content: formattedPrompt }],
       true // Format as JSON
     );
     

@@ -6,12 +6,21 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface GeneratedCode {
   html: string;
   css: string;
   js: string;
 }
+
+// Sample prompts for user guidance
+const SAMPLE_PROMPTS = [
+  "Create a contact form with name, email, message, and a submit button.",
+  "I want a portfolio section with image and description cards.",
+  "Design a responsive navigation menu with dropdown support.",
+  "Build a product pricing table with three tiers and feature lists."
+];
 
 const CodeGenerator = () => {
   const [prompt, setPrompt] = useState('');
@@ -42,6 +51,7 @@ const CodeGenerator = () => {
         return;
       }
       
+      // Pass the user prompt to be used instead of {{USER_INPUT}}
       const code = await generateCodeAsJson(apiKey, prompt);
       if (code) {
         setGeneratedCode(code);
@@ -65,6 +75,10 @@ const CodeGenerator = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSamplePrompt = (samplePrompt: string) => {
+    setPrompt(samplePrompt);
   };
 
   const renderPreview = () => {
@@ -99,71 +113,86 @@ const CodeGenerator = () => {
 
   return (
     <div className="flex flex-col gap-4 p-4">
-      <div className="flex gap-2">
-        <Input
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe the component you want to generate (e.g., 'A login form with email and password fields')"
-          disabled={isGenerating}
-          className="flex-grow"
-        />
-        <Button 
-          onClick={handleGenerateCode} 
-          disabled={isGenerating || !prompt.trim()}
-        >
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : 'Generate Code'}
-        </Button>
-      </div>
+      <Card className="mb-4">
+        <CardHeader className="pb-3">
+          <CardTitle>Generate UI Components with AI</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            Describe the UI component you want to create, and the AI will generate HTML, CSS, and JavaScript code for you.
+          </p>
+          
+          <div className="flex gap-2 mb-4">
+            <Input
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe the component you want to generate..."
+              disabled={isGenerating}
+              className="flex-grow"
+            />
+            <Button 
+              onClick={handleGenerateCode} 
+              disabled={isGenerating || !prompt.trim()}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : 'Generate Code'}
+            </Button>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Try these sample prompts:</p>
+            <div className="flex flex-wrap gap-2">
+              {SAMPLE_PROMPTS.map((samplePrompt, index) => (
+                <Button 
+                  key={index} 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleSamplePrompt(samplePrompt)}
+                  className="text-xs"
+                >
+                  {samplePrompt.length > 40 ? samplePrompt.substring(0, 40) + '...' : samplePrompt}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       
       {generatedCode && (
         <Card>
           <CardHeader className="pb-3">
             <CardTitle>Generated Code</CardTitle>
-            <div className="flex border-b">
-              <Button
-                variant={activeTab === 'html' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setActiveTab('html')}
-              >
-                HTML
-              </Button>
-              <Button
-                variant={activeTab === 'css' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setActiveTab('css')}
-              >
-                CSS
-              </Button>
-              <Button
-                variant={activeTab === 'js' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setActiveTab('js')}
-              >
-                JavaScript
-              </Button>
-              <Button
-                variant={activeTab === 'preview' ? 'default' : 'ghost'}
-                className="rounded-none"
-                onClick={() => setActiveTab('preview')}
-              >
-                Preview
-              </Button>
-            </div>
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+              <TabsList className="grid grid-cols-4">
+                <TabsTrigger value="html">HTML</TabsTrigger>
+                <TabsTrigger value="css">CSS</TabsTrigger>
+                <TabsTrigger value="js">JavaScript</TabsTrigger>
+                <TabsTrigger value="preview">Preview</TabsTrigger>
+              </TabsList>
+              <TabsContent value="html">
+                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                  <code>{generatedCode.html}</code>
+                </pre>
+              </TabsContent>
+              <TabsContent value="css">
+                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                  <code>{generatedCode.css}</code>
+                </pre>
+              </TabsContent>
+              <TabsContent value="js">
+                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                  <code>{generatedCode.js}</code>
+                </pre>
+              </TabsContent>
+              <TabsContent value="preview">
+                {renderPreview()}
+              </TabsContent>
+            </Tabs>
           </CardHeader>
-          <CardContent>
-            {activeTab === 'preview' ? (
-              renderPreview()
-            ) : (
-              <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                <code>{generatedCode[activeTab]}</code>
-              </pre>
-            )}
-          </CardContent>
         </Card>
       )}
     </div>
