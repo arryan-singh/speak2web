@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import ChatInterface from "@/components/project-editor/ChatInterface";
 import ProjectPreview from "@/components/project-editor/ProjectPreview";
@@ -11,25 +11,45 @@ import { supabase } from "@/integrations/supabase/client";
 const ProjectEditor = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isApiKeyConfigured, setIsApiKeyConfigured] = useState<boolean | null>(null);
 
   // Check if a Gemini API key is stored in the database
   useEffect(() => {
     async function checkApiKey() {
       if (user) {
-        // Check if there's a Gemini API key in the database
-        const { data, error } = await supabase
-          .from('api_keys')
-          .select('key_value')
-          .eq('service_name', 'gemini')
-          .eq('user_id', user.id)
-          .maybeSingle();
+        try {
+          // Check if there's a Gemini API key in the database
+          const { data, error } = await supabase
+            .from('api_keys')
+            .select('key_value')
+            .eq('service_name', 'gemini')
+            .eq('user_id', user.id)
+            .maybeSingle();
+            
+          if (error) {
+            console.error("Error checking API key:", error);
+            setIsApiKeyConfigured(false);
+            toast({
+              title: "Error Checking Configuration",
+              description: "Could not verify AI service configuration. Some features may be limited.",
+              variant: "destructive"
+            });
+            return;
+          }
           
-        if (error || !data) {
-          toast({
-            title: "AI Service Configuration",
-            description: "Please contact an administrator to configure the AI service.",
-            variant: "default"
-          });
+          const hasApiKey = !!data?.key_value;
+          setIsApiKeyConfigured(hasApiKey);
+          
+          if (!hasApiKey) {
+            toast({
+              title: "AI Service Configuration",
+              description: "Please configure the AI service to use all features.",
+              variant: "default"
+            });
+          }
+        } catch (error) {
+          console.error("Exception checking API key:", error);
+          setIsApiKeyConfigured(false);
         }
       }
     }

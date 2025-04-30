@@ -27,6 +27,7 @@ const CodeGenerator = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCode, setGeneratedCode] = useState<GeneratedCode | null>(null);
   const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js' | 'preview'>('html');
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
   
   const handleGenerateCode = async () => {
     if (prompt.trim() === '') {
@@ -39,6 +40,8 @@ const CodeGenerator = () => {
     }
     
     setIsGenerating(true);
+    setErrorDetails(null);
+    
     try {
       // Call the AI service edge function for code generation
       const { data, error } = await supabase.functions.invoke('ai-service', {
@@ -49,10 +52,12 @@ const CodeGenerator = () => {
       });
       
       if (error) {
+        console.error("Supabase Function Error:", error);
         throw new Error(error.message || 'Error calling AI service');
       }
       
       if (data.error) {
+        console.error("AI Service Error:", data.error);
         throw new Error(data.error);
       }
       
@@ -63,9 +68,12 @@ const CodeGenerator = () => {
         description: "Your code has been successfully generated!"
       });
     } catch (error) {
+      console.error("Code Generation Error:", error);
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      setErrorDetails(errorMessage);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "An unexpected error occurred",
+        title: "Error Generating Code",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -138,6 +146,13 @@ const CodeGenerator = () => {
               ) : 'Generate Code'}
             </Button>
           </div>
+          
+          {errorDetails && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+              <p className="font-medium">Error Details:</p>
+              <p className="text-sm">{errorDetails}</p>
+            </div>
+          )}
           
           <div className="space-y-2">
             <p className="text-sm font-medium">Try these sample prompts:</p>

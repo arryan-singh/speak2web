@@ -23,6 +23,11 @@ interface GeminiRequest {
   };
 }
 
+// Maximum number of retries for API calls
+const MAX_RETRIES = 3;
+// Initial delay for retry in ms (will be increased exponentially)
+const INITIAL_RETRY_DELAY = 500;
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -31,7 +36,7 @@ serve(async (req) => {
 
   try {
     // Get the request data
-    const { action, messages, prompt, formatAsJson } = await req.json()
+    const { action, messages, prompt } = await req.json()
     
     // Create a Supabase client with the project details and admin key
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
@@ -45,11 +50,19 @@ serve(async (req) => {
       .eq('service_name', 'gemini')
       .maybeSingle()
     
-    if (apiKeyError || !apiKeyData) {
+    if (apiKeyError) {
       console.error('Error fetching Gemini API key:', apiKeyError)
       return new Response(
-        JSON.stringify({ error: "Failed to access AI service" }),
+        JSON.stringify({ error: "Failed to access AI service database", details: apiKeyError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    
+    if (!apiKeyData || !apiKeyData.key_value) {
+      console.error('No Gemini API key found in the database')
+      return new Response(
+        JSON.stringify({ error: "AI service not configured. Please add a Gemini API key in the application settings." }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
     
@@ -69,7 +82,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('AI service error:', error)
     return new Response(
-      JSON.stringify({ error: "AI service error occurred" }),
+      JSON.stringify({ error: "AI service error occurred", details: error.message || "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
@@ -100,7 +113,7 @@ async function handleChatGeneration(messages: any[], apiKey: string, corsHeaders
       },
     }
     
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
@@ -111,20 +124,12 @@ async function handleChatGeneration(messages: any[], apiKey: string, corsHeaders
       }
     )
     
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("API HTTP error:", response.status, errorText)
-      return new Response(
-        JSON.stringify({ error: `AI service unavailable (${response.status})` }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
     const data = await response.json()
     
     if (data.error) {
+      console.error("Gemini API error:", data.error)
       return new Response(
-        JSON.stringify({ error: "AI service error" }),
+        JSON.stringify({ error: "AI service returned an error", details: data.error.message || "Unknown error" }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -141,14 +146,14 @@ async function handleChatGeneration(messages: any[], apiKey: string, corsHeaders
       )
     } else {
       return new Response(
-        JSON.stringify({ text: "No response generated" }),
+        JSON.stringify({ text: "No response generated", details: "The AI model returned an empty response" }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
   } catch (error) {
     console.error('Chat generation error:', error)
     return new Response(
-      JSON.stringify({ error: "Error generating response" }),
+      JSON.stringify({ error: "Error generating response", details: error.message || "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
@@ -156,6 +161,9 @@ async function handleChatGeneration(messages: any[], apiKey: string, corsHeaders
 
 async function handleCodeGeneration(prompt: string, apiKey: string, corsHeaders: any) {
   try {
+    // Replace any {{USER_INPUT}} placeholder with the actual prompt
+    const finalPrompt = prompt.replace(/{{USER_INPUT}}/g, prompt);
+    
     // System prompt for JSON code formatting
     const systemPrompt = `You are a code generation assistant that helps users build frontend UI components and pages. 
 When the user asks for UI components, respond ONLY with clean, executable frontend code in JSON format, containing three fields: html, css, and js.
@@ -182,7 +190,7 @@ Your response must be in this exact format:
       },
       {
         role: "user",
-        parts: [{ text: prompt }]
+        parts: [{ text: finalPrompt }]
       }
     ]
     
@@ -194,7 +202,7 @@ Your response must be in this exact format:
       },
     }
     
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
@@ -205,20 +213,12 @@ Your response must be in this exact format:
       }
     )
     
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error("Code generation API error:", response.status, errorText)
-      return new Response(
-        JSON.stringify({ error: `AI service unavailable (${response.status})` }),
-        { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
     const data = await response.json()
     
     if (data.error) {
+      console.error("Code generation API error:", data.error)
       return new Response(
-        JSON.stringify({ error: "AI service error" }),
+        JSON.stringify({ error: "AI service returned an error", details: data.error.message || "Unknown error" }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -228,11 +228,11 @@ Your response must be in this exact format:
         data.candidates[0].content.parts && 
         data.candidates[0].content.parts.length > 0) {
       
-      const response = data.candidates[0].content.parts[0].text
+      const responseText = data.candidates[0].content.parts[0].text
       
       try {
         // Try to parse as JSON to validate format
-        const jsonResponse = JSON.parse(response)
+        const jsonResponse = JSON.parse(responseText)
         
         // Validate expected structure
         if (typeof jsonResponse.html === 'string' &&
@@ -246,28 +246,52 @@ Your response must be in this exact format:
         } else {
           console.error("Invalid JSON structure:", jsonResponse)
           return new Response(
-            JSON.stringify({ error: "Generated code format is invalid" }),
+            JSON.stringify({ error: "Generated code format is invalid", details: "The response did not include all required fields" }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
       } catch (error) {
-        console.error("Failed to parse JSON:", error)
+        console.error("Failed to parse JSON:", error, "Raw response:", responseText)
         return new Response(
-          JSON.stringify({ error: "Failed to generate valid code" }),
+          JSON.stringify({ error: "Failed to generate valid code", details: "The AI model returned a response that could not be parsed as JSON" }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
     } else {
       return new Response(
-        JSON.stringify({ error: "No code generated" }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: "No code generated", details: "The AI model returned an empty response" }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
   } catch (error) {
     console.error('Code generation error:', error)
     return new Response(
-      JSON.stringify({ error: "Error generating code" }),
+      JSON.stringify({ error: "Error generating code", details: error.message || "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
+  }
+}
+
+// Helper function to retry API calls with exponential backoff
+async function fetchWithRetry(url: string, options: RequestInit, retries = MAX_RETRIES, delay = INITIAL_RETRY_DELAY): Promise<Response> {
+  try {
+    const response = await fetch(url, options);
+    
+    // If the response is a 503 (Service Unavailable) or 429 (Too Many Requests), retry
+    if ((response.status === 503 || response.status === 429) && retries > 0) {
+      console.log(`Received ${response.status} status, retrying in ${delay}ms... (${retries} retries left)`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchWithRetry(url, options, retries - 1, delay * 2); // Exponential backoff
+    }
+    
+    return response;
+  } catch (error) {
+    // Network errors are also retriable
+    if (retries > 0) {
+      console.log(`Network error, retrying in ${delay}ms... (${retries} retries left):`, error);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return fetchWithRetry(url, options, retries - 1, delay * 2); // Exponential backoff
+    }
+    throw error;
   }
 }
