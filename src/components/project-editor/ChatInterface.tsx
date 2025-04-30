@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Code } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -9,7 +8,6 @@ import MessageList from "./MessageList";
 import InputArea from "./InputArea";
 import ApiKeyInput from "./ApiKeyInput";
 import CodeGenerator from "./CodeGenerator";
-import { sendMessageToGemini } from "@/services/geminiService";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
@@ -29,7 +27,6 @@ const ChatInterface = () => {
     content: 'Hi! I\'m your AI assistant. How can I help with your project today?'
   }]);
   const [inputValue, setInputValue] = useState("");
-  const [geminiApiKey, setGeminiApiKey] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [chatSessionId, setChatSessionId] = useState<string>("");
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
@@ -41,11 +38,6 @@ const ChatInterface = () => {
     // Generate a session ID for this chat session if we don't have one
     if (!chatSessionId) {
       setChatSessionId(uuidv4());
-    }
-
-    const storedKey = localStorage.getItem("gemini_api_key");
-    if (storedKey) {
-      setGeminiApiKey(storedKey);
     }
 
     // If user is authenticated, load their chat history
@@ -221,53 +213,47 @@ const ChatInterface = () => {
     }]);
 
     try {
-      if (geminiApiKey) {
-        console.log("Sending message to Gemini with API key:", geminiApiKey ? "API key exists" : "No API key");
-        
-        const recentMessages = [...messages.slice(-5), { type: 'user' as const, content }];
-        
-        const response = await sendMessageToGemini(geminiApiKey, recentMessages);
-        console.log("Received response:", response);
-        
-        const aiMessage: Message = {
-          type: 'ai',
-          content: response
-        };
-        
-        setMessages(prev => {
-          const newMessages = [...prev];
-          const lastIndex = newMessages.length - 1;
-          
-          newMessages[lastIndex] = aiMessage;
-          return newMessages;
-        });
-        
-        // Save AI response to database
-        await saveChatMessage(aiMessage);
-      } else {
-        console.warn("No API key available for Gemini");
-        setTimeout(() => {
-          setMessages(prev => {
-            const newMessages = [...prev];
-            const lastIndex = newMessages.length - 1;
-            
-            newMessages[lastIndex] = {
-              type: 'ai',
-              content: `Please set up your Gemini API key in the configuration panel above to enable AI responses.`
-            };
-            return newMessages;
-          });
-        }, 1000);
+      // Get 5 most recent messages for context
+      const recentMessages = [...messages.slice(-5), { type: 'user' as const, content }];
+      
+      // Call our new AI service edge function
+      const { data, error } = await supabase.functions.invoke('ai-service', {
+        body: {
+          action: 'generateChat',
+          messages: recentMessages
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Error calling AI service');
       }
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      
+      const aiMessage: Message = {
+        type: 'ai',
+        content: data.text
+      };
+      
+      setMessages(prev => {
+        const newMessages = [...prev];
+        const lastIndex = newMessages.length - 1;
+        
+        newMessages[lastIndex] = aiMessage;
+        return newMessages;
+      });
+      
+      // Save AI response to database
+      await saveChatMessage(aiMessage);
     } catch (error) {
       console.error("Error processing message:", error);
       
       toast({
         title: "AI Response Error",
         description: error instanceof Error 
-          ? (error.message.includes("404") 
-              ? "There seems to be an issue with the Gemini API. Please check your API key and try again later." 
-              : error.message)
+          ? error.message
           : "Failed to process your message. Please try again.",
         variant: "destructive"
       });
@@ -277,9 +263,7 @@ const ChatInterface = () => {
         const lastIndex = newMessages.length - 1;
         
         const errorMessage = error instanceof Error 
-          ? (error.message.includes("404") 
-              ? "I'm having trouble connecting to the AI service right now. This could be due to:\n\n1. An incorrect API key\n2. A temporary service disruption\n\nPlease verify your API key and try again later." 
-              : error.message)
+          ? error.message
           : "I encountered an error processing your request. Please try again.";
           
         newMessages[lastIndex] = {
@@ -290,25 +274,6 @@ const ChatInterface = () => {
       });
     } finally {
       setIsProcessing(false);
-    }
-  };
-
-  const handleApiKeySet = (apiKey: string) => {
-    setGeminiApiKey(apiKey);
-    console.log("API key set:", apiKey ? "API key exists" : "No API key");
-    
-    if (apiKey && messages.length === 1) {
-      setTimeout(() => {
-        const welcomeMessage: Message = {
-          type: 'ai',
-          content: 'Thanks for setting up your API key! I can now provide intelligent responses to help with your project. What would you like assistance with today?'
-        };
-        
-        setMessages(prev => [...prev, welcomeMessage]);
-        
-        // Save this welcome message to the database
-        saveChatMessage(welcomeMessage);
-      }, 500);
     }
   };
 
@@ -349,14 +314,17 @@ const ChatInterface = () => {
         </div>
       </div>
       
-      <div className="px-4 pt-4">
-        <ApiKeyInput onApiKeySet={handleApiKeySet} initialApiKey={geminiApiKey} />
-      </div>
-      
       {showCodeGenerator ? (
         <CodeGenerator />
       ) : (
         <>
+          <div className="px-4 pt-4">
+            {/* API Key input removed - no longer needed as we're using backend */}
+            <p className="text-sm text-gray-500 mb-4 px-1">
+              Chat with our AI assistant to get help with your project.
+            </p>
+          </div>
+          
           <MessageList messages={messages} messagesEndRef={messagesEndRef} />
           
           {isListening && transcript && (

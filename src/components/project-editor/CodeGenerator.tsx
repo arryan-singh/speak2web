@@ -1,12 +1,12 @@
 
 import React, { useState } from 'react';
-import { generateCodeAsJson, getGeminiApiKey } from '@/services/geminiService';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GeneratedCode {
   html: string;
@@ -40,32 +40,28 @@ const CodeGenerator = () => {
     
     setIsGenerating(true);
     try {
-      const apiKey = await getGeminiApiKey();
-      if (!apiKey) {
-        toast({
-          title: "API Key Required",
-          description: "Please set up your Gemini API key first.",
-          variant: "destructive"
-        });
-        setIsGenerating(false);
-        return;
+      // Call the AI service edge function for code generation
+      const { data, error } = await supabase.functions.invoke('ai-service', {
+        body: {
+          action: 'generateCode',
+          prompt: prompt
+        }
+      });
+      
+      if (error) {
+        throw new Error(error.message || 'Error calling AI service');
       }
       
-      // Pass the user prompt to be used instead of {{USER_INPUT}}
-      const code = await generateCodeAsJson(apiKey, prompt);
-      if (code) {
-        setGeneratedCode(code);
-        toast({
-          title: "Code Generated",
-          description: "Your code has been successfully generated!"
-        });
-      } else {
-        toast({
-          title: "Generation Failed",
-          description: "Failed to generate code. Please try a different prompt.",
-          variant: "destructive"
-        });
+      if (data.error) {
+        throw new Error(data.error);
       }
+      
+      // Set the generated code
+      setGeneratedCode(data as GeneratedCode);
+      toast({
+        title: "Code Generated",
+        description: "Your code has been successfully generated!"
+      });
     } catch (error) {
       toast({
         title: "Error",

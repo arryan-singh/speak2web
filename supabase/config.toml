@@ -1,1 +1,4 @@
+
 project_id = "cnvjyogjvvaldyqmeqst"
+[functions.ai-service]
+verify_jwt = true

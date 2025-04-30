@@ -6,10 +6,36 @@ import ProjectPreview from "@/components/project-editor/ProjectPreview";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const ProjectEditor = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Check if a Gemini API key is stored in the database
+  useEffect(() => {
+    async function checkApiKey() {
+      if (user) {
+        // Check if there's a Gemini API key in the database
+        const { data, error } = await supabase
+          .from('api_keys')
+          .select('key_value')
+          .eq('service_name', 'gemini')
+          .eq('user_id', user.id)
+          .maybeSingle();
+          
+        if (error || !data) {
+          toast({
+            title: "AI Service Configuration",
+            description: "Please contact an administrator to configure the AI service.",
+            variant: "default"
+          });
+        }
+      }
+    }
+    
+    checkApiKey();
+  }, [user]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
