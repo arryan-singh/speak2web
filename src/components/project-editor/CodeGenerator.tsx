@@ -7,6 +7,8 @@ import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface GeneratedCode {
   html: string;
@@ -58,7 +60,7 @@ const CodeGenerator = () => {
       
       if (data.error) {
         console.error("AI Service Error:", data.error);
-        throw new Error(data.error);
+        throw new Error(data.error + (data.details ? `: ${data.details}` : ''));
       }
       
       // Set the generated code
@@ -148,10 +150,11 @@ const CodeGenerator = () => {
           </div>
           
           {errorDetails && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-              <p className="font-medium">Error Details:</p>
-              <p className="text-sm">{errorDetails}</p>
-            </div>
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{errorDetails}</AlertDescription>
+            </Alert>
           )}
           
           <div className="space-y-2">

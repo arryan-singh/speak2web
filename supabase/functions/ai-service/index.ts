@@ -36,7 +36,7 @@ serve(async (req) => {
 
   try {
     // Get the request data
-    const { action, messages, prompt } = await req.json()
+    const { action, prompt } = await req.json()
     
     // Create a Supabase client with the project details and admin key
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
@@ -61,17 +61,15 @@ serve(async (req) => {
     if (!apiKeyData || !apiKeyData.key_value) {
       console.error('No Gemini API key found in the database')
       return new Response(
-        JSON.stringify({ error: "AI service not configured. Please add a Gemini API key in the application settings." }),
+        JSON.stringify({ error: "AI service not configured. Please add a Gemini API key via the app settings." }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
     
     const apiKey = apiKeyData.key_value
     
-    // Handle different AI actions
-    if (action === 'generateChat') {
-      return await handleChatGeneration(messages, apiKey, corsHeaders)
-    } else if (action === 'generateCode') {
+    // Handle code generation action
+    if (action === 'generateCode') {
       return await handleCodeGeneration(prompt, apiKey, corsHeaders)
     } else {
       return new Response(
@@ -87,77 +85,6 @@ serve(async (req) => {
     )
   }
 })
-
-async function handleChatGeneration(messages: any[], apiKey: string, corsHeaders: any) {
-  try {
-    // Convert to Gemini format
-    const geminiMessages: GeminiMessage[] = messages
-      .filter(msg => msg.content && msg.content.trim() !== '')
-      .map((msg) => ({
-        role: (msg.type === "user" ? "user" : "model") as "user" | "model",
-        parts: [{ text: msg.content }],
-      }))
-    
-    if (geminiMessages.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No valid messages to process" }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    const requestBody = {
-      contents: geminiMessages,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 2048,
-      },
-    }
-    
-    const response = await fetchWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      }
-    )
-    
-    const data = await response.json()
-    
-    if (data.error) {
-      console.error("Gemini API error:", data.error)
-      return new Response(
-        JSON.stringify({ error: "AI service returned an error", details: data.error.message || "Unknown error" }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    if (data.candidates && data.candidates.length > 0 && 
-        data.candidates[0].content && 
-        data.candidates[0].content.parts && 
-        data.candidates[0].content.parts.length > 0) {
-      
-      const text = data.candidates[0].content.parts[0].text
-      return new Response(
-        JSON.stringify({ text }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    } else {
-      return new Response(
-        JSON.stringify({ text: "No response generated", details: "The AI model returned an empty response" }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-  } catch (error) {
-    console.error('Chat generation error:', error)
-    return new Response(
-      JSON.stringify({ error: "Error generating response", details: error.message || "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-  }
-}
 
 async function handleCodeGeneration(prompt: string, apiKey: string, corsHeaders: any) {
   try {
