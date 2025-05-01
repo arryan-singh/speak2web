@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Save, MessageSquare, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 interface GeneratedCode {
   html: string;
@@ -32,6 +33,7 @@ const CodeGenerator = () => {
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
   const [rawResponsePreview, setRawResponsePreview] = useState<string | null>(null);
+  const [showModificationPrompt, setShowModificationPrompt] = useState(false);
   
   const handleGenerateCode = async () => {
     if (prompt.trim() === '') {
@@ -47,6 +49,7 @@ const CodeGenerator = () => {
     setErrorDetails(null);
     setErrorStatus(null);
     setRawResponsePreview(null);
+    setShowModificationPrompt(false);
     
     try {
       // Call the AI service edge function for code generation
@@ -74,6 +77,9 @@ const CodeGenerator = () => {
       
       // Set the generated code
       setGeneratedCode(data as GeneratedCode);
+      // Show modification prompt after successful generation
+      setShowModificationPrompt(true);
+      
       toast({
         title: "Code Generated",
         description: "Your code has been successfully generated!"
@@ -94,6 +100,57 @@ const CodeGenerator = () => {
 
   const handleSamplePrompt = (samplePrompt: string) => {
     setPrompt(samplePrompt);
+  };
+
+  const saveToHistory = async () => {
+    if (!generatedCode) return;
+    
+    try {
+      // Format code as a chat message
+      const codeMessage = {
+        action: 'generateChat',
+        messages: [{
+          type: 'user',
+          content: `Generated Code for prompt: "${prompt}"`
+        }]
+      };
+      
+      // Save to chat history
+      const { error } = await supabase.functions.invoke('ai-service', {
+        body: {
+          ...codeMessage,
+          saveToHistory: true,
+          generatedCode: generatedCode
+        }
+      });
+      
+      if (error) {
+        throw new Error(error.message || 'Error saving to chat history');
+      }
+      
+      toast({
+        title: "Saved to History",
+        description: "Generated code has been saved to your chat history."
+      });
+    } catch (error) {
+      console.error("Error saving to chat history:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save code to chat history.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleModifyCode = () => {
+    // Navigate to chat interface with the generated code context
+    toast({
+      title: "Edit Mode",
+      description: "Please describe how you'd like to modify the code."
+    });
+    
+    // In a real implementation, this would redirect to chat with context
+    // or open a dialog to collect modification details
   };
 
   const renderPreview = () => {
@@ -127,7 +184,7 @@ const CodeGenerator = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 overflow-y-auto">
+    <div className="flex flex-col gap-4 p-4 overflow-y-auto h-full">
       <Card className="mb-4">
         <CardHeader className="pb-3">
           <CardTitle>Generate UI Components with AI</CardTitle>
@@ -206,37 +263,97 @@ const CodeGenerator = () => {
       </Card>
       
       {generatedCode && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle>Generated Code</CardTitle>
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
-              <TabsList className="grid grid-cols-4">
-                <TabsTrigger value="html">HTML</TabsTrigger>
-                <TabsTrigger value="css">CSS</TabsTrigger>
-                <TabsTrigger value="js">JavaScript</TabsTrigger>
-                <TabsTrigger value="preview">Preview</TabsTrigger>
-              </TabsList>
-              <TabsContent value="html">
-                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                  <code>{generatedCode.html}</code>
-                </pre>
-              </TabsContent>
-              <TabsContent value="css">
-                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                  <code>{generatedCode.css}</code>
-                </pre>
-              </TabsContent>
-              <TabsContent value="js">
-                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                  <code>{generatedCode.js}</code>
-                </pre>
-              </TabsContent>
-              <TabsContent value="preview">
+        <ResizablePanelGroup direction="horizontal" className="flex-grow">
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <Card className="h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex justify-between items-center">
+                  <span>Generated Code</span>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={saveToHistory}
+                      title="Save to chat history"
+                    >
+                      <Save className="h-4 w-4 mr-1" />
+                      <span className="hidden sm:inline">Save</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleModifyCode}
+                      title="Modify code"
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Button>
+                  </div>
+                </CardTitle>
+                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+                  <TabsList className="grid grid-cols-3">
+                    <TabsTrigger value="html">HTML</TabsTrigger>
+                    <TabsTrigger value="css">CSS</TabsTrigger>
+                    <TabsTrigger value="js">JavaScript</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="html">
+                    <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                      <code>{generatedCode.html}</code>
+                    </pre>
+                  </TabsContent>
+                  <TabsContent value="css">
+                    <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                      <code>{generatedCode.css}</code>
+                    </pre>
+                  </TabsContent>
+                  <TabsContent value="js">
+                    <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                      <code>{generatedCode.js}</code>
+                    </pre>
+                  </TabsContent>
+                </Tabs>
+              </CardHeader>
+              {showModificationPrompt && (
+                <CardContent className="pb-2">
+                  <Alert className="bg-primary/5 border-primary/20">
+                    <AlertTitle className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4" />
+                      Would you like to modify this code?
+                    </AlertTitle>
+                    <AlertDescription className="mt-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleModifyCode}
+                        className="mr-2"
+                      >
+                        Yes, make changes
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setShowModificationPrompt(false)}
+                      >
+                        No, keep as is
+                      </Button>
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              )}
+            </Card>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle>Preview</CardTitle>
+              </CardHeader>
+              <CardContent className="flex justify-center items-center h-[calc(100%-4rem)]">
                 {renderPreview()}
-              </TabsContent>
-            </Tabs>
-          </CardHeader>
-        </Card>
+              </CardContent>
+            </Card>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       )}
     </div>
   );
