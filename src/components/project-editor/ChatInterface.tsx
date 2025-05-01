@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Code } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
@@ -6,7 +7,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import MessageList from "./MessageList";
 import InputArea from "./InputArea";
-import ApiKeyInput from "./ApiKeyInput";
 import CodeGenerator from "./CodeGenerator";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
