@@ -18,8 +18,6 @@ const ProjectEditor = () => {
   // Check if a Gemini API key is stored in the database
   useEffect(() => {
     const checkApiKey = async () => {
-      if (!user) return;
-      
       try {
         setIsLoading(true);
         const { data, error } = await supabase
@@ -38,7 +36,7 @@ const ProjectEditor = () => {
         console.error("Failed to check API key configuration:", error);
         toast({
           title: "Configuration Error",
-          description: "Could not verify API key configuration. Please try again later.",
+          description: "Could not verify API key configuration. Will attempt auto-setup.",
           variant: "destructive"
         });
         setIsApiKeyConfigured(false);
@@ -48,11 +46,11 @@ const ProjectEditor = () => {
     };
     
     checkApiKey();
-  }, [user]);
+  }, []);
 
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!user) {
+    if (!user && !isLoading) {
       toast({
         title: "Authentication Required",
         description: "Please login to access the project editor",
@@ -60,10 +58,10 @@ const ProjectEditor = () => {
       });
       navigate("/login");
     }
-  }, [user, navigate]);
+  }, [user, navigate, isLoading]);
 
   // If not authenticated, don't render the editor
-  if (!user) {
+  if (!user && !isLoading) {
     return null;
   }
 

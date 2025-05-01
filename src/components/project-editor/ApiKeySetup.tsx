@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -14,9 +14,14 @@ interface ApiKeySetupProps {
 }
 
 const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onKeyConfigured }) => {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState('AIzaSyCp6rsTfqntYzJXMWx4D0c47jo-OyWv4ew');
   const [isSaving, setIsSaving] = useState(false);
   const { user } = useAuth();
+
+  // Auto-save the API key when the component mounts
+  useEffect(() => {
+    handleSaveApiKey();
+  }, []);
 
   const handleSaveApiKey = async () => {
     if (!apiKey.trim()) {
@@ -67,8 +72,8 @@ const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onKeyConfigured }) => {
       }
       
       toast({
-        title: "API Key Saved",
-        description: "Your Gemini API key has been securely stored"
+        title: "API Key Configured",
+        description: "The Gemini API key has been securely stored"
       });
       
       onKeyConfigured();
@@ -92,49 +97,19 @@ const ApiKeySetup: React.FC<ApiKeySetupProps> = ({ onKeyConfigured }) => {
           <CardTitle>Gemini API Key Setup</CardTitle>
         </div>
         <CardDescription>
-          Configure your Gemini API key to enable AI-powered code generation
+          Configuring API key for AI-powered code generation...
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              You need a valid Gemini API key to use the Code Generator feature. 
-              Your key will be stored securely and used only for code generation requests.
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              You can get a free API key from the{" "}
-              <a 
-                href="https://makersuite.google.com/app/apikey"
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Google AI Studio
-              </a>.
-            </p>
-          </div>
-          
-          <div className="flex space-x-2">
-            <Input
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              type="password"
-              placeholder="Enter your Gemini API key"
-              className="flex-grow"
-            />
-            <Button 
-              onClick={handleSaveApiKey} 
-              disabled={isSaving || !apiKey.trim()}
-            >
-              {isSaving ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
-                </>
-              ) : 'Save Key'}
-            </Button>
-          </div>
+        <div className="flex justify-center">
+          {isSaving ? (
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <p className="text-sm text-gray-500">Setting up the API key...</p>
+            </div>
+          ) : (
+            <Button onClick={handleSaveApiKey}>Retry Configuration</Button>
+          )}
         </div>
       </CardContent>
     </Card>

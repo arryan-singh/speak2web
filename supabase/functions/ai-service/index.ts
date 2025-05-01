@@ -28,6 +28,9 @@ const MAX_RETRIES = 3;
 // Initial delay for retry in ms (will be increased exponentially)
 const INITIAL_RETRY_DELAY = 500;
 
+// Default API key to use if none is found in the database
+const DEFAULT_API_KEY = "AIzaSyCp6rsTfqntYzJXMWx4D0c47jo-OyWv4ew";
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -44,37 +47,27 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
     
     // Get the Gemini API key from Supabase secrets
-    const { data: apiKeyData, error: apiKeyError } = await supabase
-      .from('api_keys')
-      .select('key_value')
-      .eq('service_name', 'gemini')
-      .maybeSingle()
+    let apiKey = DEFAULT_API_KEY;
     
-    if (apiKeyError) {
-      console.error('Error fetching Gemini API key:', apiKeyError)
-      return new Response(
-        JSON.stringify({ 
-          error: "Failed to access AI service database", 
-          details: apiKeyError.message,
-          status: "database_error"
-        }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    try {
+      const { data: apiKeyData, error: apiKeyError } = await supabase
+        .from('api_keys')
+        .select('key_value')
+        .eq('service_name', 'gemini')
+        .maybeSingle();
+      
+      if (apiKeyError) {
+        console.error('Error fetching Gemini API key:', apiKeyError);
+        // Continue with default key
+      } else if (apiKeyData && apiKeyData.key_value) {
+        apiKey = apiKeyData.key_value;
+      } else {
+        console.log('No API key found in database, using default key');
+      }
+    } catch (keyFetchError) {
+      console.error('Exception fetching API key:', keyFetchError);
+      // Continue with default key
     }
-    
-    if (!apiKeyData || !apiKeyData.key_value) {
-      console.error('No Gemini API key found in the database')
-      return new Response(
-        JSON.stringify({ 
-          error: "API key not configured", 
-          details: "No Gemini API key found in the database. Please add a Gemini API key via the app settings.",
-          status: "missing_api_key"
-        }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-    
-    const apiKey = apiKeyData.key_value
     
     // Handle code generation action
     if (action === 'generateCode') {
