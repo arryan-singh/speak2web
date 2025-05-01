@@ -31,6 +31,7 @@ const CodeGenerator = () => {
   const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js' | 'preview'>('html');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
+  const [rawResponsePreview, setRawResponsePreview] = useState<string | null>(null);
   
   const handleGenerateCode = async () => {
     if (prompt.trim() === '') {
@@ -45,6 +46,7 @@ const CodeGenerator = () => {
     setIsGenerating(true);
     setErrorDetails(null);
     setErrorStatus(null);
+    setRawResponsePreview(null);
     
     try {
       // Call the AI service edge function for code generation
@@ -63,6 +65,10 @@ const CodeGenerator = () => {
       if (data.error) {
         console.error("AI Service Error:", data.error, data.details);
         setErrorStatus(data.status || null);
+        // Store raw response preview if available
+        if (data.rawResponsePreview) {
+          setRawResponsePreview(data.rawResponsePreview);
+        }
         throw new Error(data.error + (data.details ? `: ${data.details}` : ''));
       }
       
@@ -160,6 +166,18 @@ const CodeGenerator = () => {
                 {errorStatus === 'missing_api_key' ? (
                   <>
                     The Gemini API key is missing or not properly configured. Please contact the administrator to set up the API key.
+                  </>
+                ) : errorStatus === 'parse_error' ? (
+                  <>
+                    <p>The AI model returned a response that could not be parsed as JSON. The model may need additional training to return the correct format.</p>
+                    {rawResponsePreview && (
+                      <div className="mt-2">
+                        <p className="font-semibold">Raw response preview:</p>
+                        <pre className="mt-1 text-xs p-2 bg-gray-800 text-white overflow-x-auto rounded">
+                          {rawResponsePreview}
+                        </pre>
+                      </div>
+                    )}
                   </>
                 ) : (
                   errorDetails

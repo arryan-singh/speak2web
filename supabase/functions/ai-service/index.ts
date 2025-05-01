@@ -92,14 +92,14 @@ async function handleCodeGeneration(prompt: string, apiKey: string, corsHeaders:
     // Replace any {{USER_INPUT}} placeholder with the actual prompt
     const finalPrompt = prompt.replace(/{{USER_INPUT}}/g, prompt);
     
-    // System prompt for JSON code formatting
+    // Revised system prompt that explicitly asks for raw JSON without markdown formatting
     const systemPrompt = `You are a code generation assistant that helps users build frontend UI components and pages. 
-When the user asks for UI components, respond ONLY with clean, executable frontend code in JSON format, containing three fields: html, css, and js.
-- Do not include any explanations, comments, or markdown formatting in your response.
+When the user asks for UI components, respond ONLY with clean, executable frontend code in valid JSON format, containing three fields: html, css, and js.
+- IMPORTANT: Do NOT use markdown formatting or code blocks. Return ONLY the raw JSON object.
 - Each field should contain raw code as a string.
 - Ensure the code works together when rendered in a single browser HTML page.
 - Keep the design responsive and minimal.
-Your response must be in this exact format:
+Your response must be in this exact format (with no markdown, no code blocks, just raw JSON):
 {
   "html": "<!DOCTYPE html>\\n<html>...</html>",
   "css": "body { ... }",
@@ -114,7 +114,7 @@ Your response must be in this exact format:
       },
       {
         role: "model",
-        parts: [{ text: "I'll format my responses as JSON with html, css, and js fields." }]
+        parts: [{ text: "I'll format my responses as raw JSON with html, css, and js fields without any markdown formatting." }]
       },
       {
         role: "user",
@@ -162,8 +162,17 @@ Your response must be in this exact format:
         data.candidates[0].content.parts && 
         data.candidates[0].content.parts.length > 0) {
       
-      const responseText = data.candidates[0].content.parts[0].text
+      let responseText = data.candidates[0].content.parts[0].text
       console.log("Received response from Gemini API")
+      
+      // Handle cases where the response includes markdown code blocks
+      // Extract JSON content from markdown code blocks if present
+      const jsonCodeBlockRegex = /```(?:json)?\s*\n([\s\S]*?)\n```/;
+      const match = responseText.match(jsonCodeBlockRegex);
+      if (match && match[1]) {
+        console.log("Detected markdown code block in response, extracting JSON content");
+        responseText = match[1].trim();
+      }
       
       try {
         // Try to parse as JSON to validate format
@@ -191,11 +200,14 @@ Your response must be in this exact format:
         }
       } catch (error) {
         console.error("Failed to parse JSON:", error, "Raw response:", responseText.substring(0, 200))
+        
+        // Return a more descriptive error with the first part of the raw response for debugging
         return new Response(
           JSON.stringify({ 
             error: "Failed to generate valid code", 
             details: "The AI model returned a response that could not be parsed as JSON",
-            status: "parse_error"
+            status: "parse_error",
+            rawResponsePreview: responseText.substring(0, 300) // Include part of the raw response for debugging
           }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
