@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 interface GeneratedCode {
   html: string;
@@ -29,7 +28,7 @@ const CodeGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCode, setGeneratedCode] = useState<GeneratedCode | null>(null);
-  const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js' | 'preview'>('html');
+  const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js'>('html');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
   const [rawResponsePreview, setRawResponsePreview] = useState<string | null>(null);
@@ -79,6 +78,12 @@ const CodeGenerator = () => {
       setGeneratedCode(data as GeneratedCode);
       // Show modification prompt after successful generation
       setShowModificationPrompt(true);
+      
+      // Emit an event to update the project preview
+      const previewEvent = new CustomEvent('updateProjectPreview', { 
+        detail: data 
+      });
+      window.dispatchEvent(previewEvent);
       
       toast({
         title: "Code Generated",
@@ -151,36 +156,6 @@ const CodeGenerator = () => {
     
     // In a real implementation, this would redirect to chat with context
     // or open a dialog to collect modification details
-  };
-
-  const renderPreview = () => {
-    if (!generatedCode) return null;
-    
-    // Create a blob URL for the preview
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>${generatedCode.css}</style>
-      </head>
-      <body>
-        ${generatedCode.html}
-        <script>${generatedCode.js}</script>
-      </body>
-      </html>
-    `;
-    
-    const blob = new Blob([htmlContent], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    
-    return (
-      <iframe 
-        src={url} 
-        className="w-full h-[500px] border-2 border-gray-200 rounded-lg"
-        title="Code Preview"
-        sandbox="allow-scripts allow-same-origin"
-      />
-    );
   };
 
   return (
@@ -263,97 +238,82 @@ const CodeGenerator = () => {
       </Card>
       
       {generatedCode && (
-        <ResizablePanelGroup direction="horizontal" className="flex-grow">
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <Card className="h-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex justify-between items-center">
-                  <span>Generated Code</span>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={saveToHistory}
-                      title="Save to chat history"
-                    >
-                      <Save className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">Save</span>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={handleModifyCode}
-                      title="Modify code"
-                    >
-                      <Edit className="h-4 w-4 mr-1" />
-                      <span className="hidden sm:inline">Edit</span>
-                    </Button>
-                  </div>
-                </CardTitle>
-                <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
-                  <TabsList className="grid grid-cols-3">
-                    <TabsTrigger value="html">HTML</TabsTrigger>
-                    <TabsTrigger value="css">CSS</TabsTrigger>
-                    <TabsTrigger value="js">JavaScript</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="html">
-                    <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                      <code>{generatedCode.html}</code>
-                    </pre>
-                  </TabsContent>
-                  <TabsContent value="css">
-                    <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                      <code>{generatedCode.css}</code>
-                    </pre>
-                  </TabsContent>
-                  <TabsContent value="js">
-                    <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
-                      <code>{generatedCode.js}</code>
-                    </pre>
-                  </TabsContent>
-                </Tabs>
-              </CardHeader>
-              {showModificationPrompt && (
-                <CardContent className="pb-2">
-                  <Alert className="bg-primary/5 border-primary/20">
-                    <AlertTitle className="flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      Would you like to modify this code?
-                    </AlertTitle>
-                    <AlertDescription className="mt-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handleModifyCode}
-                        className="mr-2"
-                      >
-                        Yes, make changes
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => setShowModificationPrompt(false)}
-                      >
-                        No, keep as is
-                      </Button>
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              )}
-            </Card>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle>Preview</CardTitle>
-              </CardHeader>
-              <CardContent className="flex justify-center items-center h-[calc(100%-4rem)]">
-                {renderPreview()}
-              </CardContent>
-            </Card>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+        <Card className="mb-4">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex justify-between items-center">
+              <span>Generated Code</span>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={saveToHistory}
+                  title="Save to chat history"
+                >
+                  <Save className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Save</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleModifyCode}
+                  title="Modify code"
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  <span className="hidden sm:inline">Edit</span>
+                </Button>
+              </div>
+            </CardTitle>
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+              <TabsList className="grid grid-cols-3">
+                <TabsTrigger value="html">HTML</TabsTrigger>
+                <TabsTrigger value="css">CSS</TabsTrigger>
+                <TabsTrigger value="js">JavaScript</TabsTrigger>
+              </TabsList>
+              <TabsContent value="html">
+                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                  <code>{generatedCode.html}</code>
+                </pre>
+              </TabsContent>
+              <TabsContent value="css">
+                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                  <code>{generatedCode.css}</code>
+                </pre>
+              </TabsContent>
+              <TabsContent value="js">
+                <pre className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto max-h-[500px]">
+                  <code>{generatedCode.js}</code>
+                </pre>
+              </TabsContent>
+            </Tabs>
+          </CardHeader>
+          {showModificationPrompt && (
+            <CardContent className="pb-2">
+              <Alert className="bg-primary/5 border-primary/20">
+                <AlertTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Would you like to modify this code?
+                </AlertTitle>
+                <AlertDescription className="mt-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleModifyCode}
+                    className="mr-2"
+                  >
+                    Yes, make changes
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setShowModificationPrompt(false)}
+                  >
+                    No, keep as is
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+          )}
+        </Card>
       )}
     </div>
   );
