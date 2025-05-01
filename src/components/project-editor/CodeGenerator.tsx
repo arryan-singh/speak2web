@@ -30,6 +30,7 @@ const CodeGenerator = () => {
   const [generatedCode, setGeneratedCode] = useState<GeneratedCode | null>(null);
   const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js' | 'preview'>('html');
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
+  const [errorStatus, setErrorStatus] = useState<string | null>(null);
   
   const handleGenerateCode = async () => {
     if (prompt.trim() === '') {
@@ -43,6 +44,7 @@ const CodeGenerator = () => {
     
     setIsGenerating(true);
     setErrorDetails(null);
+    setErrorStatus(null);
     
     try {
       // Call the AI service edge function for code generation
@@ -59,7 +61,8 @@ const CodeGenerator = () => {
       }
       
       if (data.error) {
-        console.error("AI Service Error:", data.error);
+        console.error("AI Service Error:", data.error, data.details);
+        setErrorStatus(data.status || null);
         throw new Error(data.error + (data.details ? `: ${data.details}` : ''));
       }
       
@@ -118,7 +121,7 @@ const CodeGenerator = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 p-4 overflow-y-auto">
       <Card className="mb-4">
         <CardHeader className="pb-3">
           <CardTitle>Generate UI Components with AI</CardTitle>
@@ -153,7 +156,15 @@ const CodeGenerator = () => {
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{errorDetails}</AlertDescription>
+              <AlertDescription>
+                {errorStatus === 'missing_api_key' ? (
+                  <>
+                    The Gemini API key is missing or not properly configured. Please contact the administrator to set up the API key.
+                  </>
+                ) : (
+                  errorDetails
+                )}
+              </AlertDescription>
             </Alert>
           )}
           

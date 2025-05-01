@@ -53,7 +53,11 @@ serve(async (req) => {
     if (apiKeyError) {
       console.error('Error fetching Gemini API key:', apiKeyError)
       return new Response(
-        JSON.stringify({ error: "Failed to access AI service database", details: apiKeyError.message }),
+        JSON.stringify({ 
+          error: "Failed to access AI service database", 
+          details: apiKeyError.message,
+          status: "database_error"
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -61,8 +65,12 @@ serve(async (req) => {
     if (!apiKeyData || !apiKeyData.key_value) {
       console.error('No Gemini API key found in the database')
       return new Response(
-        JSON.stringify({ error: "AI service not configured. Please add a Gemini API key via the app settings." }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          error: "API key not configured", 
+          details: "No Gemini API key found in the database. Please add a Gemini API key via the app settings.",
+          status: "missing_api_key"
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
     
@@ -129,6 +137,8 @@ Your response must be in this exact format:
       },
     }
     
+    console.log(`Sending request to Gemini API for prompt: "${finalPrompt.substring(0, 100)}..."`)
+    
     const response = await fetchWithRetry(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
@@ -145,7 +155,11 @@ Your response must be in this exact format:
     if (data.error) {
       console.error("Code generation API error:", data.error)
       return new Response(
-        JSON.stringify({ error: "AI service returned an error", details: data.error.message || "Unknown error" }),
+        JSON.stringify({ 
+          error: "AI service returned an error", 
+          details: data.error.message || "Unknown error",
+          status: "api_error"
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -156,6 +170,7 @@ Your response must be in this exact format:
         data.candidates[0].content.parts.length > 0) {
       
       const responseText = data.candidates[0].content.parts[0].text
+      console.log("Received response from Gemini API")
       
       try {
         // Try to parse as JSON to validate format
@@ -173,27 +188,44 @@ Your response must be in this exact format:
         } else {
           console.error("Invalid JSON structure:", jsonResponse)
           return new Response(
-            JSON.stringify({ error: "Generated code format is invalid", details: "The response did not include all required fields" }),
+            JSON.stringify({ 
+              error: "Generated code format is invalid", 
+              details: "The response did not include all required fields",
+              status: "invalid_format"
+            }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
       } catch (error) {
-        console.error("Failed to parse JSON:", error, "Raw response:", responseText)
+        console.error("Failed to parse JSON:", error, "Raw response:", responseText.substring(0, 200))
         return new Response(
-          JSON.stringify({ error: "Failed to generate valid code", details: "The AI model returned a response that could not be parsed as JSON" }),
+          JSON.stringify({ 
+            error: "Failed to generate valid code", 
+            details: "The AI model returned a response that could not be parsed as JSON",
+            status: "parse_error"
+          }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         )
       }
     } else {
+      console.error("Empty or invalid response from Gemini API")
       return new Response(
-        JSON.stringify({ error: "No code generated", details: "The AI model returned an empty response" }),
+        JSON.stringify({ 
+          error: "No code generated", 
+          details: "The AI model returned an empty response",
+          status: "empty_response"
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
   } catch (error) {
     console.error('Code generation error:', error)
     return new Response(
-      JSON.stringify({ error: "Error generating code", details: error.message || "Unknown error" }),
+      JSON.stringify({ 
+        error: "Error generating code", 
+        details: error.message || "Unknown error",
+        status: "general_error"
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
