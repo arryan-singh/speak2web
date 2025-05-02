@@ -8,6 +8,8 @@ import { toast } from "@/components/ui/use-toast";
 import CodeGenerator from "@/components/project-editor/CodeGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import ApiKeySetup from "@/components/project-editor/ApiKeySetup";
+import { Button } from "@/components/ui/button";
+import { Home } from "lucide-react";
 
 const ProjectEditor = () => {
   const { user } = useAuth();
@@ -69,6 +71,14 @@ const ProjectEditor = () => {
     setIsApiKeyConfigured(true);
   };
 
+  const navigateToHome = () => {
+    navigate('/');
+    toast({
+      title: "Returning to Home",
+      description: "Navigating to the main page"
+    });
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-background dark:bg-gray-900 text-text dark:text-white">
       <ResizablePanelGroup direction="horizontal" className="w-full">
@@ -76,13 +86,22 @@ const ProjectEditor = () => {
           <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-900">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800">
               <h2 className="text-xl font-semibold text-primary dark:text-white">Code Generator</h2>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={navigateToHome} 
+                className="ml-auto hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                aria-label="Return to home page"
+              >
+                <Home className="h-5 w-5" />
+              </Button>
             </div>
             
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="flex flex-col items-center gap-2">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                  <p className="text-sm text-gray-500">Loading configuration...</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Loading configuration...</p>
                 </div>
               </div>
             ) : !isApiKeyConfigured ? (

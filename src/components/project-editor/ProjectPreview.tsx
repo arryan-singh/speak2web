@@ -34,24 +34,24 @@ const ProjectPreview: React.FC = () => {
       return (
         <div className="text-center max-w-3xl mx-auto">
           <h3 className="text-xl font-semibold text-primary dark:text-white mb-3">Project Preview</h3>
-          <p className="text-accent dark:text-gray-400 mb-6 text-sm">Generate some code to see a preview here</p>
+          <p className="text-accent dark:text-gray-300 mb-6 text-sm">Generate some code to see a preview here</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
               <h4 className="font-medium text-primary dark:text-white text-base mb-1">Components</h4>
-              <p className="text-xs text-accent dark:text-gray-400">Core building blocks</p>
+              <p className="text-xs text-accent dark:text-gray-300">Core building blocks</p>
             </Card>
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
               <h4 className="font-medium text-primary dark:text-white text-base mb-1">Assets</h4>
-              <p className="text-xs text-accent dark:text-gray-400">Media & resources</p>
+              <p className="text-xs text-accent dark:text-gray-300">Media & resources</p>
             </Card>
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
               <h4 className="font-medium text-primary dark:text-white text-base mb-1">Styling</h4>
-              <p className="text-xs text-accent dark:text-gray-400">Design elements</p>
+              <p className="text-xs text-accent dark:text-gray-300">Design elements</p>
             </Card>
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
               <h4 className="font-medium text-primary dark:text-white text-base mb-1">Logic</h4>
-              <p className="text-xs text-accent dark:text-gray-400">Functional code</p>
+              <p className="text-xs text-accent dark:text-gray-300">Functional code</p>
             </Card>
           </div>
         </div>
@@ -75,7 +75,7 @@ const ProjectPreview: React.FC = () => {
       
       // Using srcdoc for the iframe to load the HTML directly
       return (
-        <div className="w-full h-full bg-white rounded-lg overflow-hidden">
+        <div className="w-full h-full bg-white rounded-lg overflow-hidden shadow-inner">
           <iframe 
             srcDoc={combinedCode}
             title="Project Preview"
@@ -87,7 +87,7 @@ const ProjectPreview: React.FC = () => {
     } else {
       // Show code view with tabs
       return (
-        <div className="space-y-4">
+        <div className="space-y-4 p-2">
           <CodePreview code={generatedCode.html} language="HTML" fileName="index.html" />
           <CodePreview code={generatedCode.css} language="CSS" fileName="style.css" />
           <CodePreview code={generatedCode.js} language="JavaScript" fileName="script.js" />
@@ -101,15 +101,15 @@ const ProjectPreview: React.FC = () => {
       <div className="mb-4 flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-primary dark:text-white mb-1">Project Preview</h1>
-          <p className="text-accent dark:text-gray-400 text-sm">Real-time preview of your project</p>
+          <p className="text-accent dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
         <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')}>
-          <ToggleGroupItem value="preview" aria-label="Show preview">
+          <ToggleGroupItem value="preview" aria-label="Show preview" className="text-sm font-medium">
             <Eye className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Preview</span>
           </ToggleGroupItem>
-          <ToggleGroupItem value="code" aria-label="Show code">
+          <ToggleGroupItem value="code" aria-label="Show code" className="text-sm font-medium">
             <Code className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Code</span>
           </ToggleGroupItem>
@@ -122,12 +122,12 @@ const ProjectPreview: React.FC = () => {
           {/* Preview header */}
           <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-2 flex items-center">
             <div className="flex items-center space-x-1 ml-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
             </div>
             <div className="flex-1 text-center">
-              <span className="text-xs font-medium text-gray-500 dark:text-gray-300">
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-200">
                 {viewMode === 'preview' ? 'Live Preview' : 'Code View'}
               </span>
             </div>
