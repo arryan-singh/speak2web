@@ -48,26 +48,69 @@
 
 /* Add spacing between UI elements */
 .ui-spacing > * + * {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 }
 
 /* Improved padding for better UI layout */
 .section-padding {
-  padding: 2rem;
+  padding: 2.5rem;
 }
 
 @media (min-width: 768px) {
   .section-padding {
-    padding: 3rem;
+    padding: 3.5rem;
   }
 }
 
 /* Enhanced visual separation */
 .ui-divider {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin: 1.5rem 0;
+  margin: 2rem 0;
 }
 
 .dark .ui-divider {
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dark mode button styling fixes */
+.dark button:not([class*="bg-"]) {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Better spacing between header elements */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Fix spacing between button groups */
+.button-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Improved container depth perception in dark mode */
+.dark .container-elevated {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced form controls for dark mode */
+.dark .form-control {
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(30, 30, 30, 0.8);
+}
+
+/* Improved toggle button contrast in dark mode */
+.dark .toggle-group {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(40, 40, 40, 0.8);
+}
+
+.dark .toggle-item[data-state="on"] {
+  background-color: #3b82f6;
+  color: white;
 }

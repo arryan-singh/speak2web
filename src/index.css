@@ -94,6 +94,60 @@
   background-color: white !important;
 }
 
+/* Input field styles for dark mode - based on user's CSS */
+.dark input[type="text"], .dark input[type="email"], .dark input[type="password"], 
+.dark textarea, .dark select {
+  color: #ffffff !important;
+  background-color: #1f1f1f !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark input:focus, .dark textarea:focus, .dark select:focus {
+  border-color: #00bfff !important;
+  outline: none;
+}
+
+/* Toggle button styles for project preview section */
+.dark .toggle-button {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.dark .toggle-button.active {
+  background-color: #00bfff;
+  color: #000000;
+}
+
+/* Send button in code generator */
+.dark .send-button {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+/* Header buttons spacing */
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Improved UI scaling */
+.container, .section {
+  padding: 1.5rem;
+  margin: 1rem;
+}
+
+.card, .chat-box, .preview-panel {
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.dark .card, .dark .chat-box, .dark .preview-panel {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
 /* Keep existing animations */
 @keyframes fadeIn {
   from {

@@ -46,7 +46,7 @@ export const UserMenu = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar>
-            <AvatarFallback className="bg-primary text-white dark:bg-blue-600 dark:text-white border dark:border-gray-400">
+            <AvatarFallback className="bg-blue-600 text-white border dark:border-gray-400 dark:bg-white dark:text-gray-800 font-bold">
               {getInitials(user.email || 'U')}
             </AvatarFallback>
           </Avatar>

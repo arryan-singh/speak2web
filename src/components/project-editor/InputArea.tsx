@@ -53,7 +53,7 @@ const InputArea: React.FC<InputAreaProps> = ({
             onClick={handleSend} 
             size="icon" 
             disabled={!inputValue.trim() || isProcessing}
-            className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600 rounded-xl h-10 w-10 transition-colors border dark:border-blue-400"
+            className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white rounded-xl h-10 w-10 transition-colors border dark:border-gray-300"
           >
             {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
           </Button>
