@@ -19,19 +19,19 @@ export default {
     },
     extend: {
       colors: {
-        // New black, white and gray color palette
-        primary: "#222222",
+        // Improved color palette for better contrast
+        primary: "#111827", // Darker for better visibility
         "primary-dark": "#000000",
-        accent: "#888888",
+        accent: "#4B5563", // Darkened for better contrast
         background: "#FFFFFF",
-        "background-darker": "#F1F1F1",
-        text: "#222222",
-        error: "#000000",
-        success: "#444444",
-        lavender: "#F3F3F3",
+        "background-darker": "#F3F4F6",
+        text: "#111827", // Darker for better readability
+        error: "#DC2626", // Brighter for better visibility
+        success: "#059669", // Brighter for better visibility
+        lavender: "#F3F3F9", // Slightly more colorful
         
         // Keep existing color variables for backward compatibility
-        maroon: "#222222",
+        maroon: "#111827",
         crimson: "#000000",
         cream: "#FFFFFF",
         border: "hsl(var(--border))",

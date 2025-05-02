@@ -80,12 +80,12 @@ const ProjectEditor = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background dark:bg-gray-900 text-text dark:text-white">
+    <div className="flex h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
       <ResizablePanelGroup direction="horizontal" className="w-full">
         <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
-          <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-900">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-background dark:bg-gray-800">
-              <h2 className="text-xl font-semibold text-primary dark:text-white">Code Generator</h2>
+          <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Code Generator</h2>
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -93,14 +93,14 @@ const ProjectEditor = () => {
                 className="ml-auto hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
                 aria-label="Return to home page"
               >
-                <Home className="h-5 w-5" />
+                <Home className="h-5 w-5 text-gray-700 dark:text-gray-300" />
               </Button>
             </div>
             
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="flex flex-col items-center gap-2">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent dark:border-blue-500"></div>
                   <p className="text-sm text-gray-600 dark:text-gray-300">Loading configuration...</p>
                 </div>
               </div>
@@ -113,7 +113,7 @@ const ProjectEditor = () => {
             )}
           </div>
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        <ResizableHandle withHandle className="bg-gray-100 dark:bg-gray-800" />
         <ResizablePanel defaultSize={60}>
           <ProjectPreview />
         </ResizablePanel>

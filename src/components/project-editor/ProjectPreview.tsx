@@ -33,25 +33,25 @@ const ProjectPreview: React.FC = () => {
     if (!generatedCode) {
       return (
         <div className="text-center max-w-3xl mx-auto">
-          <h3 className="text-xl font-semibold text-primary dark:text-white mb-3">Project Preview</h3>
-          <p className="text-accent dark:text-gray-300 mb-6 text-sm">Generate some code to see a preview here</p>
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-3">Project Preview</h3>
+          <p className="text-gray-600 dark:text-gray-200 mb-6 text-sm">Generate some code to see a preview here</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
-              <h4 className="font-medium text-primary dark:text-white text-base mb-1">Components</h4>
-              <p className="text-xs text-accent dark:text-gray-300">Core building blocks</p>
+              <h4 className="font-medium text-gray-800 dark:text-white text-base mb-1">Components</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-300">Core building blocks</p>
             </Card>
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
-              <h4 className="font-medium text-primary dark:text-white text-base mb-1">Assets</h4>
-              <p className="text-xs text-accent dark:text-gray-300">Media & resources</p>
+              <h4 className="font-medium text-gray-800 dark:text-white text-base mb-1">Assets</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-300">Media & resources</p>
             </Card>
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
-              <h4 className="font-medium text-primary dark:text-white text-base mb-1">Styling</h4>
-              <p className="text-xs text-accent dark:text-gray-300">Design elements</p>
+              <h4 className="font-medium text-gray-800 dark:text-white text-base mb-1">Styling</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-300">Design elements</p>
             </Card>
             <Card className="p-4 hover-scale border border-gray-200 dark:border-gray-700 dark:bg-gray-800 transition-all duration-300">
-              <h4 className="font-medium text-primary dark:text-white text-base mb-1">Logic</h4>
-              <p className="text-xs text-accent dark:text-gray-300">Functional code</p>
+              <h4 className="font-medium text-gray-800 dark:text-white text-base mb-1">Logic</h4>
+              <p className="text-xs text-gray-600 dark:text-gray-300">Functional code</p>
             </Card>
           </div>
         </div>
@@ -97,11 +97,11 @@ const ProjectPreview: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-background-darker dark:bg-gray-900 p-4 overflow-auto flex flex-col">
+    <div className="h-full bg-gray-100 dark:bg-gray-900 p-4 overflow-auto flex flex-col">
       <div className="mb-4 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-primary dark:text-white mb-1">Project Preview</h1>
-          <p className="text-accent dark:text-gray-300 text-sm">Real-time preview of your project</p>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Project Preview</h1>
+          <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
         <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')}>

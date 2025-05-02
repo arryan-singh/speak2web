@@ -6,15 +6,15 @@
 @layer base {
   :root {
     /* Light theme colors - Improved for better contrast */
-    --primary: #222222;
+    --primary: #111827; /* Darker shade for better visibility */
     --primary-dark: #000000;
-    --accent: #555555; /* Darkened from #888888 for better contrast */
+    --accent: #4B5563; /* Darkened for better contrast */
     --background: #FFFFFF;
-    --background-darker: #F1F1F1;
-    --text: #222222;
-    --error: #D32F2F; /* Changed from black to a red for better error indication */
-    --success: #2E7D32; /* Changed to a green for better success indication */
-    --lavender: #F3F3F3;
+    --background-darker: #F3F4F6;
+    --text: #111827; /* Darker text for better readability */
+    --error: #DC2626; /* Brighter red for better error indication */
+    --success: #059669; /* Brighter green for better success indication */
+    --lavender: #F3F3F9;
     
     /* Keep original colors for compatibility */
     --maroon: #222222;
@@ -23,21 +23,21 @@
   }
 
   .dark {
-    /* Dark theme colors - Improved for better contrast */
-    --primary: #FFFFFF;
-    --primary-dark: #E0E0E0; /* Lightened for better visibility */
-    --accent: #CCCCCC; /* Lightened from #AAAAAA for better contrast */
-    --background: #121212;
-    --background-darker: #1A1A1A;
-    --text: #FFFFFF;
-    --error: #FF5555;
-    --success: #88CC88;
-    --lavender: #2A2A2A;
+    /* Dark theme colors - Significantly improved for better contrast */
+    --primary: #F9FAFB; /* Lighter for better visibility in dark mode */
+    --primary-dark: #E5E7EB;
+    --accent: #D1D5DB; /* Much lighter for better contrast */
+    --background: #111827;
+    --background-darker: #1F2937;
+    --text: #F9FAFB; /* Lighter text for dark mode */
+    --error: #F87171; /* Brighter for visibility */
+    --success: #6EE7B7; /* Brighter for visibility */
+    --lavender: #2A2A4A; /* Slightly more colorful for better distinction */
     
     /* Keep original colors for compatibility but in dark mode */
-    --maroon: #DDDDDD;
+    --maroon: #E5E7EB;
     --red: #FFFFFF;
-    --cream: #181818;
+    --cream: #1F2937;
   }
 
   body {
@@ -49,7 +49,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-medium tracking-tight;
+    @apply font-semibold tracking-tight; /* Increased font weight for better visibility */
     color: var(--primary); /* Ensure headings always have good contrast */
   }
 
@@ -64,7 +64,7 @@
 
   /* Improved focus styles for accessibility */
   *:focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 3px solid var(--primary); /* Thicker outline */
     outline-offset: 2px;
   }
 }
@@ -77,7 +77,7 @@
 }
 
 .dark .switch-thumb {
-  background-color: #222;
+  background-color: #111;
 }
 
 /* Enhance the Switch component styles in dark mode */
@@ -137,20 +137,20 @@
 
 /* Improved button styles for better contrast and accessibility */
 .btn-primary {
-  @apply bg-primary text-white dark:bg-primary dark:text-background px-5 py-2.5 rounded-lg font-medium 
-    transition-all duration-200 hover:bg-primary-dark focus:ring-2 
-    focus:ring-primary/50 focus:outline-none shadow-sm;
+  @apply bg-blue-600 text-white dark:bg-blue-500 dark:text-white px-5 py-2.5 rounded-lg font-medium 
+    transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-2 
+    focus:ring-blue-300 dark:focus:ring-blue-400 focus:outline-none shadow-sm;
 }
 
 .btn-secondary {
-  @apply bg-white text-primary dark:bg-gray-800 dark:text-white border border-primary/20 dark:border-white/20 
+  @apply bg-white text-gray-800 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 
     px-5 py-2.5 rounded-lg font-medium transition-all duration-200 
-    hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-2 focus:ring-primary/50 focus:outline-none shadow-sm;
+    hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:outline-none shadow-sm;
 }
 
 /* Login button specific styles */
 .login-button {
-  @apply bg-primary text-white hover:bg-primary-dark dark:bg-blue-600 dark:hover:bg-blue-700 
+  @apply bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 
     dark:text-white px-4 py-2 rounded-lg font-medium shadow-md
     transition-all duration-200 border-0;
 }
@@ -163,8 +163,8 @@
 
 /* Input field styles with better contrast */
 .input-field {
-  @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-primary
-    dark:bg-gray-800 dark:text-white focus:ring-1 focus:ring-primary/30 focus:outline-none transition-all duration-200;
+  @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500
+    dark:bg-gray-700 dark:text-white focus:ring-1 focus:ring-blue-400 focus:outline-none transition-all duration-200;
 }
 
 /* Improved reading experience for content areas */
@@ -175,5 +175,5 @@
 
 /* Better color contrast for links */
 a:not([class]) {
-  @apply text-blue-700 dark:text-blue-400 hover:underline;
+  @apply text-blue-600 dark:text-blue-400 hover:underline;
 }
