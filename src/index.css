@@ -45,7 +45,7 @@
     background-image: linear-gradient(to bottom, var(--background), var(--background-darker));
     min-height: 100vh;
     letter-spacing: 0.015em; /* Slightly increased for better readability */
-    line-height: 1.6; /* Improved line height for better readability */
+    line-height: 1.7; /* Improved line height for better readability */
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -54,7 +54,7 @@
   }
 
   p {
-    margin-bottom: 0.75rem; /* Add more spacing between paragraphs */
+    margin-bottom: 1rem; /* Add more spacing between paragraphs */
   }
 
   /* Theme transition */
@@ -65,7 +65,7 @@
   /* Improved focus styles for accessibility */
   *:focus-visible {
     outline: 3px solid var(--primary); /* Thicker outline */
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 }
 
@@ -132,45 +132,45 @@
 
 .hover-scale:hover {
   transform: scale(1.02);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 /* Improved button styles for better contrast and accessibility */
 .btn-primary {
-  @apply bg-blue-600 text-white dark:bg-blue-500 dark:text-white px-5 py-2.5 rounded-lg font-medium 
+  @apply bg-blue-600 text-white dark:bg-blue-500 dark:text-white px-6 py-3 rounded-lg font-medium 
     transition-all duration-200 hover:bg-blue-700 dark:hover:bg-blue-600 focus:ring-2 
     focus:ring-blue-300 dark:focus:ring-blue-400 focus:outline-none shadow-sm;
 }
 
 .btn-secondary {
   @apply bg-white text-gray-800 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 
-    px-5 py-2.5 rounded-lg font-medium transition-all duration-200 
+    px-6 py-3 rounded-lg font-medium transition-all duration-200 
     hover:bg-gray-50 dark:hover:bg-gray-600 focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-500 focus:outline-none shadow-sm;
 }
 
 /* Login button specific styles */
 .login-button {
   @apply bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 
-    dark:text-white px-4 py-2 rounded-lg font-medium shadow-md
+    dark:text-white px-5 py-2.5 rounded-lg font-medium shadow-md
     transition-all duration-200 border-0;
 }
 
 /* Card styles with improved dark mode */
 .custom-card {
-  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6
-    transition-all duration-200 hover:shadow-md;
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-md p-6
+    transition-all duration-200 hover:shadow-lg;
 }
 
 /* Input field styles with better contrast */
 .input-field {
-  @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:border-blue-500
-    dark:bg-gray-700 dark:text-white focus:ring-1 focus:ring-blue-400 focus:outline-none transition-all duration-200;
+  @apply w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-500 focus:border-blue-500
+    dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all duration-200;
 }
 
 /* Improved reading experience for content areas */
 .content-area {
   @apply max-w-prose mx-auto;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 /* Better color contrast for links */

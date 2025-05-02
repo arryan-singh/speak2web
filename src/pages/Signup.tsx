@@ -69,64 +69,61 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-4">
-      <div className="absolute top-4 right-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-5">
+      <div className="absolute top-5 right-5">
         <ThemeToggle />
       </div>
       
-      <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-700 dark:bg-gray-800 animate-fade-in">
-        <CardHeader className="space-y-1">
+      <Card className="w-full max-w-md shadow-lg border-gray-200 dark:border-gray-600 dark:bg-gray-800 animate-fade-in">
+        <CardHeader className="space-y-2">
           <div className="flex items-center justify-between">
             <CardTitle className="text-3xl font-bold text-primary dark:text-white">Sign up</CardTitle>
-            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white dark:text-gray-300">
+            <Link to="/" className="text-accent hover:text-primary transition-colors dark:hover:text-white dark:text-gray-300 p-2">
               <ArrowLeft size={20} />
             </Link>
           </div>
-          <CardDescription className="dark:text-gray-300">
+          <CardDescription className="dark:text-gray-300 text-base">
             Create an account to get started
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleEmailSignup}>
-            <div className="grid gap-4">
+            <div className="grid gap-5">
               <div className="grid gap-2">
-                <Label htmlFor="username" className="dark:text-white">Username</Label>
+                <Label htmlFor="username" className="dark:text-white text-base">Username</Label>
                 <Input
                   id="username"
                   type="text"
                   placeholder="johndoe"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="bg-white dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-600"
                   required
                   minLength={3}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email" className="dark:text-white">Email</Label>
+                <Label htmlFor="email" className="dark:text-white text-base">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="m@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-400 dark:border-gray-600"
                   required
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password" className="dark:text-white">Password</Label>
+                <Label htmlFor="password" className="dark:text-white text-base">Password</Label>
                 <Input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600"
                   required
                 />
               </div>
               <Button 
-                className="w-full bg-primary hover:bg-primary-dark text-white dark:bg-blue-600 dark:hover:bg-blue-700" 
+                className="w-full mt-2 bg-primary hover:bg-primary-dark text-white dark:bg-blue-600 dark:hover:bg-blue-700 py-6 text-base" 
                 type="submit" 
                 disabled={isLoading}
               >
@@ -135,10 +132,10 @@ const Signup = () => {
             </div>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col items-center justify-center space-y-2">
-          <div className="text-center text-sm text-muted-foreground dark:text-gray-400">
+        <CardFooter className="flex flex-col items-center justify-center space-y-2 pt-5">
+          <div className="text-center text-sm text-muted-foreground dark:text-gray-300">
             Already have an account?{" "}
-            <Link to="/login" className="underline text-accent hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+            <Link to="/login" className="underline font-medium text-accent hover:text-primary dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
               Sign in
             </Link>
           </div>

@@ -75,7 +75,7 @@ const ProjectPreview: React.FC = () => {
       
       // Using srcdoc for the iframe to load the HTML directly
       return (
-        <div className="w-full h-full bg-white rounded-lg overflow-hidden shadow-inner">
+        <div className="w-full h-full bg-white dark:bg-gray-700 rounded-lg overflow-hidden shadow-inner">
           <iframe 
             srcDoc={combinedCode}
             title="Project Preview"
@@ -98,18 +98,18 @@ const ProjectPreview: React.FC = () => {
 
   return (
     <div className="h-full bg-gray-100 dark:bg-gray-900 p-4 overflow-auto flex flex-col">
-      <div className="mb-4 flex justify-between items-center">
+      <div className="mb-6 flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Project Preview</h1>
           <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
-        <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')}>
-          <ToggleGroupItem value="preview" aria-label="Show preview" className="text-sm font-medium">
+        <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} className="border dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg shadow-sm p-1">
+          <ToggleGroupItem value="preview" aria-label="Show preview" className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 data-[state=on]:bg-blue-100">
             <Eye className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Preview</span>
           </ToggleGroupItem>
-          <ToggleGroupItem value="code" aria-label="Show code" className="text-sm font-medium">
+          <ToggleGroupItem value="code" aria-label="Show code" className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 data-[state=on]:bg-blue-100">
             <Code className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Code</span>
           </ToggleGroupItem>
@@ -120,14 +120,14 @@ const ProjectPreview: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-grow overflow-hidden">
         <div className="h-full flex flex-col">
           {/* Preview header */}
-          <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-2 flex items-center">
+          <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-3 flex items-center">
             <div className="flex items-center space-x-1 ml-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
             </div>
             <div className="flex-1 text-center">
-              <span className="text-xs font-medium text-gray-700 dark:text-gray-200">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
                 {viewMode === 'preview' ? 'Live Preview' : 'Code View'}
               </span>
             </div>

@@ -30,6 +30,20 @@ export default {
         success: "#059669", // Brighter for better visibility
         lavender: "#F3F3F9", // Slightly more colorful
         
+        // Brand colors with better contrast
+        'brand-blue': {
+          '50': '#e6f1fe',
+          '100': '#cce3fd',
+          '200': '#99c7fb',
+          '300': '#66abf9',
+          '400': '#338ff7',
+          '500': '#006FEE', // Brand primary
+          '600': '#0057be',
+          '700': '#00418f',
+          '800': '#002b5f',
+          '900': '#001630',
+        },
+
         // Keep existing color variables for backward compatibility
         maroon: "#111827",
         crimson: "#000000",
@@ -103,6 +117,20 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out'
+      },
+      spacing: {
+        '18': '4.5rem',
+        '22': '5.5rem',
+        '72': '18rem',
+        '84': '21rem',
+        '96': '24rem',
+      },
+      fontSize: {
+        'xxs': '0.625rem', // Extra small text
+      },
+      boxShadow: {
+        'soft': '0 4px 12px -2px rgba(0, 0, 0, 0.08)',
+        'soft-lg': '0 10px 25px -3px rgba(0, 0, 0, 0.05)',
       }
     }
   },
