@@ -9,13 +9,17 @@ import CodeGenerator from "@/components/project-editor/CodeGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import ApiKeySetup from "@/components/project-editor/ApiKeySetup";
 import { Button } from "@/components/ui/button";
-import { Home } from "lucide-react";
+import { Home, Sun, Moon } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserMenu } from "@/components/UserMenu";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const ProjectEditor = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isApiKeyConfigured, setIsApiKeyConfigured] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { theme } = useTheme();
 
   // Check if a Gemini API key is stored in the database
   useEffect(() => {
@@ -80,44 +84,58 @@ const ProjectEditor = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
-      <ResizablePanelGroup direction="horizontal" className="w-full">
-        <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
-          <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Code Generator</h2>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={navigateToHome} 
-                className="ml-auto hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
-                aria-label="Return to home page"
-              >
-                <Home className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-              </Button>
-            </div>
-            
-            {isLoading ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="flex flex-col items-center gap-2">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent dark:border-blue-500"></div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Loading configuration...</p>
+    <div className="flex flex-col h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
+      {/* Fixed Navigation Bar */}
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-3 px-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={navigateToHome} 
+            className="hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+            aria-label="Return to home page"
+          >
+            <Home className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+          </Button>
+          <h1 className="text-xl font-semibold text-gray-800 dark:text-white">Speak2web Editor</h1>
+        </div>
+        <div className="flex items-center gap-6">
+          <ThemeToggle />
+          <UserMenu />
+        </div>
+      </header>
+
+      {/* Main Content - Adjusted to account for the fixed header */}
+      <div className="flex-1 mt-14">
+        <ResizablePanelGroup direction="horizontal" className="w-full">
+          <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
+            <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Code Generator</h2>
+              </div>
+              
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent dark:border-blue-500"></div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">Loading configuration...</p>
+                  </div>
                 </div>
-              </div>
-            ) : !isApiKeyConfigured ? (
-              <div className="p-4 overflow-y-auto">
-                <ApiKeySetup onKeyConfigured={handleApiKeyConfigured} />
-              </div>
-            ) : (
-              <CodeGenerator />
-            )}
-          </div>
-        </ResizablePanel>
-        <ResizableHandle withHandle className="bg-gray-100 dark:bg-gray-800" />
-        <ResizablePanel defaultSize={60}>
-          <ProjectPreview />
-        </ResizablePanel>
-      </ResizablePanelGroup>
+              ) : !isApiKeyConfigured ? (
+                <div className="p-4 overflow-y-auto">
+                  <ApiKeySetup onKeyConfigured={handleApiKeyConfigured} />
+                </div>
+              ) : (
+                <CodeGenerator />
+              )}
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle className="bg-gray-100 dark:bg-gray-800" />
+          <ResizablePanel defaultSize={60}>
+            <ProjectPreview />
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </div>
     </div>
   );
 };

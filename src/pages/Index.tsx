@@ -16,6 +16,7 @@ const Index = () => {
   const {
     user
   } = useAuth();
+  
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -56,6 +57,7 @@ const Index = () => {
       }
     };
   }, []);
+  
   const toggleListening = () => {
     if (!recognition) return;
     if (isListening) {
@@ -74,6 +76,7 @@ const Index = () => {
       });
     }
   };
+  
   const handleCommand = (command: string) => {
     if (command === "create" || command === "edit") {
       // Check if user is authenticated before navigation
@@ -93,14 +96,15 @@ const Index = () => {
       navigate("/editor");
     }
   };
-  return <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-6 md:p-12 transition-colors duration-300">
+  
+  return <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-6 md:p-10 transition-colors duration-300">
       <div className="absolute top-6 right-6 flex items-center gap-8">
         <ThemeToggle />
         <UserMenu />
       </div>
       
-      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center pt-16 md:pt-24">
-        <div className="space-y-8 animate-slide-in">
+      <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center pt-10 md:pt-12">
+        <div className="space-y-6 animate-slide-in">
           <h1 className="text-5xl md:text-7xl font-bold text-gray-800 tracking-tight dark:text-white">
             Speak2web
           </h1>
@@ -110,7 +114,7 @@ const Index = () => {
           <p className="text-lg text-gray-700 opacity-80 max-w-xl dark:text-gray-300">
             Create stunning websites using the power of your voice. Transform your ideas into beautiful, functional web experiences.
           </p>
-          <div className="mt-8">
+          <div className="mt-6">
             <Button onClick={toggleListening} className={`flex items-center gap-3 px-6 py-6 text-base rounded-xl shadow-md transition-all duration-300 ${isListening ? 'bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600' : 'bg-white text-gray-800 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700'}`}>
               {isListening ? <>
                   <MicOff className="h-5 w-5" /> Stop Listening
@@ -125,10 +129,10 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="space-y-8 mt-16 md:mt-24">
+        <div className="space-y-6 mt-8 md:mt-10">
           <Card style={{
           animationDelay: "0.2s"
-        }} onClick={() => handleCommand("create")} className="p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm">
+        }} onClick={() => handleCommand("create")} className="p-6 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">Create New</h2>
@@ -140,7 +144,7 @@ const Index = () => {
             </div>
           </Card>
 
-          <Card className={`p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm ${!user ? 'opacity-70' : ''}`} style={{
+          <Card className={`p-6 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm ${!user ? 'opacity-70' : ''}`} style={{
           animationDelay: "0.4s"
         }} onClick={() => handleCommand("edit")}>
             <div className="flex items-center justify-between">
@@ -159,7 +163,7 @@ const Index = () => {
         </div>
       </div>
 
-      <footer className="mt-16 text-center text-gray-500 dark:text-gray-400 animate-fade-in py-6" style={{
+      <footer className="mt-10 text-center text-gray-500 dark:text-gray-400 animate-fade-in py-4" style={{
       animationDelay: "0.6s"
     }}>
         <p>Powered by voice recognition technology. <span className="text-gray-600 dark:text-gray-300 font-medium">Speak</span> to create.</p>
