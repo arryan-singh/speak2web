@@ -127,7 +127,7 @@ const Index = () => {
         <div className="space-y-6 mt-8 md:mt-0">
           <Card style={{
           animationDelay: "0.2s"
-        }} onClick={() => handleCommand("create")} className="p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm mx-0 py-[10px]">
+        }} onClick={() => handleCommand("create")} className="p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm mx-0 py-[15px]">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">Create New</h2>
