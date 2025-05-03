@@ -106,7 +106,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-6 md:p-12 transition-colors duration-300">
-      <div className="absolute top-4 right-4 flex items-center gap-3">
+      <div className="absolute top-4 right-4 flex items-center gap-6">
         <ThemeToggle />
         <UserMenu />
       </div>
