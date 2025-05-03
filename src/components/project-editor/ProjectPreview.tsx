@@ -105,11 +105,19 @@ const ProjectPreview: React.FC = () => {
         </div>
         
         <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} className="border dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg shadow-sm p-1">
-          <ToggleGroupItem value="preview" aria-label="Show preview" className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 data-[state=on]:bg-blue-100">
+          <ToggleGroupItem 
+            value="preview" 
+            aria-label="Show preview" 
+            className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 dark:data-[state=off]:bg-gray-700 data-[state=on]:bg-blue-100"
+          >
             <Eye className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Preview</span>
           </ToggleGroupItem>
-          <ToggleGroupItem value="code" aria-label="Show code" className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 data-[state=on]:bg-blue-100">
+          <ToggleGroupItem 
+            value="code" 
+            aria-label="Show code" 
+            className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 dark:data-[state=off]:bg-gray-700 data-[state=on]:bg-blue-100"
+          >
             <Code className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Code</span>
           </ToggleGroupItem>

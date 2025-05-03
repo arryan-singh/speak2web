@@ -362,7 +362,7 @@ const CodeGenerator = () => {
                     variant="outline" 
                     size="sm" 
                     onClick={() => handleSamplePrompt(samplePrompt)}
-                    className="text-xs"
+                    className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
                   >
                     {samplePrompt.length > 30 ? samplePrompt.substring(0, 30) + '...' : samplePrompt}
                   </Button>
@@ -386,7 +386,7 @@ const CodeGenerator = () => {
               <Button 
                 onClick={handleGenerateCode} 
                 disabled={isGenerating || !prompt.trim()}
-                className="shrink-0"
+                className="shrink-0 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
               >
                 {isGenerating ? (
                   <>
