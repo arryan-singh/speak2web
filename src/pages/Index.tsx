@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,35 +7,31 @@ import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
-
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [recognition, setRecognition] = useState<any>(null);
   const navigate = useNavigate();
-  const { user } = useAuth();
-
+  const {
+    user
+  } = useAuth();
   useEffect(() => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       const recognitionInstance = new SpeechRecognition();
-      
       recognitionInstance.continuous = true;
       recognitionInstance.interimResults = true;
       recognitionInstance.lang = 'en-US';
-      
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const current = event.resultIndex;
         const result = event.results[current][0].transcript.toLowerCase();
         setTranscript(result);
-        
         if (result.includes("create new") || result.includes("create project")) {
           handleCommand("create");
         } else if (result.includes("edit project") || result.includes("edit")) {
           handleCommand("edit");
         }
       };
-      
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error', event.error);
         setIsListening(false);
@@ -46,7 +41,6 @@ const Index = () => {
           variant: "destructive"
         });
       };
-      
       setRecognition(recognitionInstance);
     } else {
       toast({
@@ -55,17 +49,14 @@ const Index = () => {
         variant: "destructive"
       });
     }
-    
     return () => {
       if (recognition) {
         recognition.stop();
       }
     };
   }, []);
-
   const toggleListening = () => {
     if (!recognition) return;
-    
     if (isListening) {
       recognition.stop();
       setIsListening(false);
@@ -82,7 +73,6 @@ const Index = () => {
       });
     }
   };
-
   const handleCommand = (command: string) => {
     if (command === "create" || command === "edit") {
       // Check if user is authenticated before navigation
@@ -95,7 +85,6 @@ const Index = () => {
         navigate("/login");
         return;
       }
-      
       toast({
         title: "Command Recognized",
         description: `${command === "create" ? "Creating" : "Editing"} project...`
@@ -103,9 +92,7 @@ const Index = () => {
       navigate("/editor");
     }
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-6 md:p-12 transition-colors duration-300">
+  return <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-black p-6 md:p-12 transition-colors duration-300">
       <div className="absolute top-4 right-4 flex items-center gap-6">
         <ThemeToggle />
         <UserMenu />
@@ -123,39 +110,24 @@ const Index = () => {
             Create stunning websites using the power of your voice. Transform your ideas into beautiful, functional web experiences.
           </p>
           <div className="mt-8">
-            <Button 
-              onClick={toggleListening} 
-              className={`flex items-center gap-3 px-6 py-6 text-base rounded-xl shadow-md transition-all duration-300 ${
-                isListening 
-                  ? 'bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600' 
-                  : 'bg-white text-gray-800 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700'
-              }`}
-            >
-              {isListening ? (
-                <>
+            <Button onClick={toggleListening} className={`flex items-center gap-3 px-6 py-6 text-base rounded-xl shadow-md transition-all duration-300 ${isListening ? 'bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600' : 'bg-white text-gray-800 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700'}`}>
+              {isListening ? <>
                   <MicOff className="h-5 w-5" /> Stop Listening
-                </>
-              ) : (
-                <>
+                </> : <>
                   <Mic className="h-5 w-5" /> Start Voice Commands
-                </>
-              )}
+                </>}
             </Button>
-            {isListening && (
-              <div className="mt-5 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm">
+            {isListening && <div className="mt-5 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm">
                 <p className="text-sm font-medium text-gray-800 dark:text-gray-200">I heard: <span className="text-gray-900 dark:text-white font-semibold">{transcript}</span></p>
                 <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">Try saying "Create New" or "Edit Project"</p>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
 
         <div className="space-y-6 mt-8 md:mt-0">
-          <Card 
-            className="p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm"
-            style={{ animationDelay: "0.2s" }}
-            onClick={() => handleCommand("create")}
-          >
+          <Card style={{
+          animationDelay: "0.2s"
+        }} onClick={() => handleCommand("create")} className="p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm mx-0 py-[10px]">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">Create New</h2>
@@ -167,11 +139,9 @@ const Index = () => {
             </div>
           </Card>
 
-          <Card 
-            className={`p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm ${!user ? 'opacity-70' : ''}`}
-            style={{ animationDelay: "0.4s" }}
-            onClick={() => handleCommand("edit")}
-          >
+          <Card className={`p-8 hover-scale bg-white/90 dark:bg-gray-800/90 backdrop-blur border border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer animate-fade-in shadow-sm ${!user ? 'opacity-70' : ''}`} style={{
+          animationDelay: "0.4s"
+        }} onClick={() => handleCommand("edit")}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
@@ -188,11 +158,11 @@ const Index = () => {
         </div>
       </div>
 
-      <footer className="mt-16 text-center text-gray-500 dark:text-gray-400 animate-fade-in py-6" style={{ animationDelay: "0.6s" }}>
+      <footer className="mt-16 text-center text-gray-500 dark:text-gray-400 animate-fade-in py-6" style={{
+      animationDelay: "0.6s"
+    }}>
         <p>Powered by voice recognition technology. <span className="text-gray-600 dark:text-gray-300 font-medium">Speak</span> to create.</p>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
