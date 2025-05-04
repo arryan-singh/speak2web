@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Mic, MicOff } from "lucide-react";
@@ -8,14 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserMenu } from "@/components/UserMenu";
 import { useAuth } from "@/contexts/AuthContext";
-import { WakeWordDetector, isSpeechRecognitionSupported } from "@/utils/speechRecognition";
+import { isSpeechRecognitionSupported } from "@/utils/speechRecognition";
 
 const Index = () => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [recognition, setRecognition] = useState<any>(null);
-  const [isWakeWordEnabled, setIsWakeWordEnabled] = useState(false);
-  const wakeWordDetectorRef = useRef<WakeWordDetector | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   
@@ -54,57 +52,12 @@ const Index = () => {
       });
     }
     
-    // Setup wake word detector
-    if (isSpeechRecognitionSupported()) {
-      wakeWordDetectorRef.current = new WakeWordDetector("Hey Spark", handleWakeWordDetected);
-    }
-    
     return () => {
       if (recognition) {
         recognition.stop();
       }
-      if (wakeWordDetectorRef.current) {
-        wakeWordDetectorRef.current.stop();
-      }
     };
   }, []);
-  
-  const handleWakeWordDetected = () => {
-    toast({
-      title: "Wake Word Detected",
-      description: "Hey Spark detected! What would you like to do?",
-    });
-    
-    // Auto start regular voice recognition when wake word is detected
-    if (recognition && !isListening) {
-      recognition.start();
-      setIsListening(true);
-      toast({
-        title: "Listening",
-        description: "Try saying 'Create new' or 'Edit project'"
-      });
-    }
-  };
-  
-  const toggleWakeWordDetection = () => {
-    if (!wakeWordDetectorRef.current) return;
-    
-    if (isWakeWordEnabled) {
-      wakeWordDetectorRef.current.stop();
-      setIsWakeWordEnabled(false);
-      toast({
-        title: "Wake Word Detection Disabled",
-        description: "No longer listening for 'Hey Spark'."
-      });
-    } else {
-      wakeWordDetectorRef.current.start();
-      setIsWakeWordEnabled(true);
-      toast({
-        title: "Wake Word Detection Enabled",
-        description: "Now listening for 'Hey Spark'..."
-      });
-    }
-  };
   
   const toggleListening = () => {
     if (!recognition) return;
@@ -170,24 +123,10 @@ const Index = () => {
                   <Mic className="h-5 w-5" /> Start Voice Commands
                 </>}
             </Button>
-            <Button onClick={toggleWakeWordDetection} className={`flex items-center gap-3 px-6 py-6 text-base rounded-xl shadow-md transition-all duration-300 ${isWakeWordEnabled ? 'bg-amber-600 hover:bg-amber-700 text-white dark:bg-amber-500 dark:hover:bg-amber-600' : 'bg-white text-gray-800 border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700'}`}>
-              {isWakeWordEnabled ? <>
-                  <MicOff className="h-5 w-5" /> Disable "Hey Spark"
-                </> : <>
-                  <Mic className="h-5 w-5" /> Enable "Hey Spark"
-                </>}
-            </Button>
           </div>
-          {(isListening || isWakeWordEnabled) && <div className="mt-5 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm">
-              {isListening && (
-                <p className="text-sm font-medium text-gray-800 dark:text-gray-200">I heard: <span className="text-gray-900 dark:text-white font-semibold">{transcript}</span></p>
-              )}
-              {isWakeWordEnabled && (
-                <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">Listening for wake word "Hey Spark"</p>
-              )}
-              {isListening && (
-                <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">Try saying "Create New" or "Edit Project"</p>
-              )}
+          {isListening && <div className="mt-5 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm">
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-200">I heard: <span className="text-gray-900 dark:text-white font-semibold">{transcript}</span></p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">Try saying "Create New" or "Edit Project"</p>
             </div>}
         </div>
 
@@ -230,7 +169,7 @@ const Index = () => {
     }}>
         <p>Powered by voice recognition technology. <span className="text-gray-600 dark:text-gray-300 font-medium">Speak</span> to create.</p>
         {isSpeechRecognitionSupported() && (
-          <p className="mt-2 text-xs">Try saying <span className="font-medium text-blue-500 dark:text-blue-400">"Hey Spark"</span> to activate voice commands</p>
+          <p className="mt-2 text-xs">Use voice commands to navigate and create content</p>
         )}
       </footer>
     </div>;

@@ -6,17 +6,16 @@ export const isSpeechRecognitionSupported = (): boolean => {
   return 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
 };
 
-// Wake word detection with configurable sensitivity
-export class WakeWordDetector {
+// Continuous voice recognition class
+export class ContinuousVoiceRecognition {
   private recognition: any = null;
-  private wakeWord: string;
-  private onWakeWordDetected: () => void;
+  private onTranscriptUpdate: (transcript: string) => void;
   private isListening: boolean = false;
   private restartTimeout: number | null = null;
+  private finalTranscript: string = '';
   
-  constructor(wakeWord: string, onWakeWordDetected: () => void) {
-    this.wakeWord = wakeWord.toLowerCase();
-    this.onWakeWordDetected = onWakeWordDetected;
+  constructor(onTranscriptUpdate: (transcript: string) => void) {
+    this.onTranscriptUpdate = onTranscriptUpdate;
     
     if (isSpeechRecognitionSupported()) {
       // Use any type to avoid TypeScript errors with the Speech Recognition API
@@ -33,24 +32,19 @@ export class WakeWordDetector {
   }
   
   private handleSpeechResult(event: SpeechRecognitionEvent) {
-    const current = event.resultIndex;
-    const transcript = event.results[current][0].transcript.toLowerCase().trim();
-    console.log('Heard:', transcript);
+    let interimTranscript = '';
     
-    // Check if wake word is detected
-    if (transcript.includes(this.wakeWord)) {
-      console.log('Wake word detected:', this.wakeWord);
-      // Temporarily stop listening to avoid multiple detections
-      this.pause();
-      
-      // Trigger the callback
-      this.onWakeWordDetected();
-      
-      // Restart listening after a short delay
-      this.restartTimeout = window.setTimeout(() => {
-        this.start();
-      }, 5000); // Resume listening after 5 seconds
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        this.finalTranscript += transcript + ' ';
+      } else {
+        interimTranscript = transcript;
+      }
     }
+    
+    // Send the complete transcript (final + interim) to callback
+    this.onTranscriptUpdate(this.finalTranscript + interimTranscript);
   }
   
   private handleSpeechError(event: SpeechRecognitionErrorEvent) {
@@ -77,7 +71,7 @@ export class WakeWordDetector {
       try {
         this.recognition.start();
         this.isListening = true;
-        console.log('Wake word detection started, listening for:', this.wakeWord);
+        console.log('Continuous voice recognition started');
       } catch (error) {
         console.error('Error starting speech recognition:', error);
       }
@@ -101,9 +95,15 @@ export class WakeWordDetector {
   public stop() {
     this.pause();
     this.isListening = false;
+    this.finalTranscript = '';
   }
   
   public isActive(): boolean {
     return this.isListening;
   }
+  
+  public clearTranscript() {
+    this.finalTranscript = '';
+  }
 }
+

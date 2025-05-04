@@ -1,9 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { Loader2, Save, MessageSquare, Edit, Send } from "lucide-react";
+import { Loader2, MessageSquare, Edit, Save } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +10,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
-import WakeWordListener from './WakeWordListener';
 import InputArea from './InputArea';
 
 interface GeneratedCode {
@@ -36,8 +34,6 @@ const SAMPLE_PROMPTS = [
   "Build a product pricing table with three tiers and feature lists."
 ];
 
-const WAKE_WORD = "Hey Spark";
-
 const CodeGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -49,7 +45,6 @@ const CodeGenerator = () => {
   const [showModificationPrompt, setShowModificationPrompt] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isListening, setIsListening] = useState(false);
-  const [voiceInputActive, setVoiceInputActive] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom of chat when messages change
@@ -164,15 +159,19 @@ const CodeGenerator = () => {
 
   const toggleListening = () => {
     setIsListening(!isListening);
-  };
-
-  const handleWakeWordDetected = () => {
-    // When wake word is detected, activate voice input
-    setVoiceInputActive(true);
-  };
-  
-  const handleVoiceInputComplete = () => {
-    setVoiceInputActive(false);
+    
+    // Show toast for voice recognition state
+    if (!isListening) {
+      toast({
+        title: "Voice Recognition Activated",
+        description: "Speak naturally to create your prompt."
+      });
+    } else {
+      toast({
+        title: "Voice Recognition Paused",
+        description: "Voice input has been disabled."
+      });
+    }
   };
 
   const saveToHistory = async (messageId: string) => {
@@ -234,18 +233,21 @@ const CodeGenerator = () => {
           <div className="h-full overflow-hidden flex flex-col">
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-medium">Code Generator</h3>
-              <WakeWordListener 
-                wakeWord={WAKE_WORD}
-                onWakeWordDetected={handleWakeWordDetected}
-                isDisabled={isGenerating || voiceInputActive}
-              />
+              <Button
+                size="sm"
+                variant={isListening ? "destructive" : "outline"}
+                className="flex items-center gap-2"
+                onClick={toggleListening}
+              >
+                {isListening ? "Disable Voice Input" : "Enable Voice Input"}
+              </Button>
             </div>
             <div className="flex-1 overflow-y-auto p-4">
               {chatHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
                   <MessageSquare className="h-12 w-12 mb-4 opacity-50" />
                   <h3 className="text-lg font-medium mb-2">No conversations yet</h3>
-                  <p className="text-sm mb-4">Start by typing a prompt below, try one of the sample prompts, or say "{WAKE_WORD}" to begin voice input.</p>
+                  <p className="text-sm mb-4">Start by typing a prompt below, try one of the sample prompts, or enable voice input.</p>
                 </div>
               ) : (
                 <div className="space-y-4 pb-4">
@@ -405,8 +407,6 @@ const CodeGenerator = () => {
                 toggleListening={toggleListening}
                 handleSend={handleGenerateCode}
                 isProcessing={isGenerating}
-                activateVoiceInput={voiceInputActive}
-                onVoiceInputComplete={handleVoiceInputComplete}
               />
             </div>
           </div>
