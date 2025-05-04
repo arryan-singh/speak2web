@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
+import WakeWordListener from './WakeWordListener';
+import InputArea from './InputArea';
 
 interface GeneratedCode {
   html: string;
@@ -33,6 +36,8 @@ const SAMPLE_PROMPTS = [
   "Build a product pricing table with three tiers and feature lists."
 ];
 
+const WAKE_WORD = "Hey Spark";
+
 const CodeGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -43,6 +48,8 @@ const CodeGenerator = () => {
   const [rawResponsePreview, setRawResponsePreview] = useState<string | null>(null);
   const [showModificationPrompt, setShowModificationPrompt] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const [voiceInputActive, setVoiceInputActive] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom of chat when messages change
@@ -155,6 +162,19 @@ const CodeGenerator = () => {
     setPrompt(samplePrompt);
   };
 
+  const toggleListening = () => {
+    setIsListening(!isListening);
+  };
+
+  const handleWakeWordDetected = () => {
+    // When wake word is detected, activate voice input
+    setVoiceInputActive(true);
+  };
+  
+  const handleVoiceInputComplete = () => {
+    setVoiceInputActive(false);
+  };
+
   const saveToHistory = async (messageId: string) => {
     const messageWithCode = chatHistory.find(msg => msg.id === messageId && msg.code);
     if (!messageWithCode?.code) return;
@@ -212,12 +232,20 @@ const CodeGenerator = () => {
       <div className="flex-1 overflow-y-auto">
         <Card className="h-full">
           <div className="h-full overflow-hidden flex flex-col">
+            <div className="p-4 border-b flex justify-between items-center">
+              <h3 className="text-lg font-medium">Code Generator</h3>
+              <WakeWordListener 
+                wakeWord={WAKE_WORD}
+                onWakeWordDetected={handleWakeWordDetected}
+                isDisabled={isGenerating || voiceInputActive}
+              />
+            </div>
             <div className="flex-1 overflow-y-auto p-4">
               {chatHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
                   <MessageSquare className="h-12 w-12 mb-4 opacity-50" />
                   <h3 className="text-lg font-medium mb-2">No conversations yet</h3>
-                  <p className="text-sm mb-4">Start by typing a prompt below or try one of the sample prompts.</p>
+                  <p className="text-sm mb-4">Start by typing a prompt below, try one of the sample prompts, or say "{WAKE_WORD}" to begin voice input.</p>
                 </div>
               ) : (
                 <div className="space-y-4 pb-4">
@@ -370,37 +398,16 @@ const CodeGenerator = () => {
                 </div>
               </div>
               
-              <div className="flex gap-2 mt-4">
-                <Input
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe the component you want to generate..."
-                  disabled={isGenerating}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey && prompt.trim()) {
-                      e.preventDefault();
-                      handleGenerateCode();
-                    }
-                  }}
-                />
-                <Button 
-                  onClick={handleGenerateCode} 
-                  disabled={isGenerating || !prompt.trim()}
-                  className="shrink-0 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="mr-2 h-4 w-4" />
-                      Send
-                    </>
-                  )}
-                </Button>
-              </div>
+              <InputArea
+                inputValue={prompt}
+                setInputValue={setPrompt}
+                isListening={isListening}
+                toggleListening={toggleListening}
+                handleSend={handleGenerateCode}
+                isProcessing={isGenerating}
+                activateVoiceInput={voiceInputActive}
+                onVoiceInputComplete={handleVoiceInputComplete}
+              />
             </div>
           </div>
         </Card>
