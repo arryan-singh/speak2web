@@ -124,7 +124,7 @@ const ProjectPreview: React.FC = () => {
         </ToggleGroup>
       </div>
       
-      {/* Preview/Code area */}
+      {/* Preview/Code area with better overflow handling */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-grow overflow-hidden">
         <div className="h-full flex flex-col">
           {/* Preview header */}
@@ -141,7 +141,7 @@ const ProjectPreview: React.FC = () => {
             </div>
           </div>
           
-          {/* Preview content */}
+          {/* Preview content with overflow handling */}
           <div className="flex-1 p-6 overflow-auto bg-white dark:bg-gray-800">
             {renderPreview()}
           </div>

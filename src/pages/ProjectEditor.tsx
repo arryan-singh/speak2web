@@ -85,7 +85,7 @@ const ProjectEditor = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
-      {/* Fixed Navigation Bar */}
+      {/* Fixed Navigation Bar with higher z-index */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-3 px-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="flex items-center gap-4">
           <Button 
@@ -105,7 +105,7 @@ const ProjectEditor = () => {
         </div>
       </header>
 
-      {/* Main Content - Adjusted to account for the fixed header */}
+      {/* Main Content with padding-top to account for fixed header */}
       <div className="flex-1 mt-14">
         <ResizablePanelGroup direction="horizontal" className="w-full">
           <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -209,9 +208,9 @@ const CodeGenerator = () => {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <Card className="flex-1 flex flex-col overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="flex-1 overflow-auto">
+        <Card className="flex-1 flex flex-col h-full overflow-hidden">
           <ScrollArea className="flex-1 p-4">
             {chatHistory.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
