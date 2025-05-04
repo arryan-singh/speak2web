@@ -26,7 +26,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   onVoiceInputComplete
 }) => {
   const [voiceActivated, setVoiceActivated] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   useEffect(() => {
@@ -38,7 +38,8 @@ const InputArea: React.FC<InputAreaProps> = ({
   
   const startVoiceInput = () => {
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      // Use any to bypass TypeScript issues with the Web Speech API
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       
       if (recognitionRef.current) {
         recognitionRef.current.stop();
@@ -51,7 +52,7 @@ const InputArea: React.FC<InputAreaProps> = ({
       
       let finalTranscript = '';
       
-      recognition.onresult = (event) => {
+      recognition.onresult = (event: any) => {
         let interimTranscript = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
@@ -65,7 +66,7 @@ const InputArea: React.FC<InputAreaProps> = ({
         setInputValue(finalTranscript + interimTranscript);
       };
       
-      recognition.onerror = (event) => {
+      recognition.onerror = (event: any) => {
         console.error('Speech recognition error', event.error);
         setVoiceActivated(false);
         toast({

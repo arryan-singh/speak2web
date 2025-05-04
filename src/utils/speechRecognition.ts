@@ -8,7 +8,7 @@ export const isSpeechRecognitionSupported = (): boolean => {
 
 // Wake word detection with configurable sensitivity
 export class WakeWordDetector {
-  private recognition: SpeechRecognition | null = null;
+  private recognition: any = null;
   private wakeWord: string;
   private onWakeWordDetected: () => void;
   private isListening: boolean = false;
@@ -19,6 +19,7 @@ export class WakeWordDetector {
     this.onWakeWordDetected = onWakeWordDetected;
     
     if (isSpeechRecognitionSupported()) {
+      // Use any type to avoid TypeScript errors with the Speech Recognition API
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       this.recognition = new SpeechRecognition();
       this.recognition.continuous = true;
