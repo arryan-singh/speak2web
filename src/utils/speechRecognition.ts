@@ -1,6 +1,14 @@
 
 // Speech recognition utility functions
 
+// Define any type for SpeechRecognition to avoid TypeScript errors
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 // Check if browser supports speech recognition
 export const isSpeechRecognitionSupported = (): boolean => {
   return 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
@@ -106,4 +114,3 @@ export class ContinuousVoiceRecognition {
     this.finalTranscript = '';
   }
 }
-

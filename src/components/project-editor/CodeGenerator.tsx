@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
@@ -26,12 +25,10 @@ interface ChatMessage {
   code?: GeneratedCode;
 }
 
-// Sample prompts for user guidance
+// Reduced sample prompts from 4 to 2
 const SAMPLE_PROMPTS = [
   "Create a contact form with name, email, message, and a submit button.",
-  "I want a portfolio section with image and description cards.",
-  "Design a responsive navigation menu with dropdown support.",
-  "Build a product pricing table with three tiers and feature lists."
+  "Design a responsive navigation menu with dropdown support."
 ];
 
 const CodeGenerator = () => {
@@ -242,6 +239,8 @@ const CodeGenerator = () => {
                 {isListening ? "Disable Voice Input" : "Enable Voice Input"}
               </Button>
             </div>
+            
+            {/* Increased the chat area by giving it more flex space */}
             <div className="flex-1 overflow-y-auto p-4">
               {chatHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
@@ -382,22 +381,21 @@ const CodeGenerator = () => {
               </CardContent>
             )}
             
-            <div className="border-t p-4 bg-white dark:bg-gray-900">
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Try these sample prompts:</p>
-                <div className="flex flex-wrap gap-2">
-                  {SAMPLE_PROMPTS.map((samplePrompt, index) => (
-                    <Button 
-                      key={index} 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => handleSamplePrompt(samplePrompt)}
-                      className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
-                    >
-                      {samplePrompt.length > 30 ? samplePrompt.substring(0, 30) + '...' : samplePrompt}
-                    </Button>
-                  ))}
-                </div>
+            {/* Simplified sample prompts section */}
+            <div className="border-t py-2 px-4 bg-white dark:bg-gray-900">
+              <div className="flex flex-wrap gap-2 items-center">
+                <span className="text-xs font-medium">Try:</span>
+                {SAMPLE_PROMPTS.map((samplePrompt, index) => (
+                  <Button 
+                    key={index} 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleSamplePrompt(samplePrompt)}
+                    className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                  >
+                    {samplePrompt.length > 35 ? samplePrompt.substring(0, 35) + '...' : samplePrompt}
+                  </Button>
+                ))}
               </div>
               
               <InputArea
