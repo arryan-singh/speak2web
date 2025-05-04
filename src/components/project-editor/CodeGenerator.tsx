@@ -208,199 +208,201 @@ const CodeGenerator = () => {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex-1 overflow-auto">
-        <Card className="flex-1 flex flex-col h-full overflow-hidden">
-          <ScrollArea className="flex-1 p-4">
-            {chatHistory.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
-                <MessageSquare className="h-12 w-12 mb-4 opacity-50" />
-                <h3 className="text-lg font-medium mb-2">No conversations yet</h3>
-                <p className="text-sm mb-4">Start by typing a prompt below or try one of the sample prompts.</p>
-              </div>
-            ) : (
-              <div className="space-y-4 pb-4">
-                {chatHistory.map((message) => (
-                  <div 
-                    key={message.id}
-                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className={`flex gap-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <Avatar className={`h-8 w-8 ${message.type === 'user' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
-                        <span className="text-xs">{message.type === 'user' ? 'U' : 'AI'}</span>
-                      </Avatar>
-                      <div>
-                        <div 
-                          className={`rounded-lg p-3 text-sm ${
-                            message.type === 'user' 
-                              ? 'bg-primary text-primary-foreground' 
-                              : 'bg-muted'
-                          }`}
-                        >
-                          {message.content}
-                        </div>
-                        
-                        {message.code && (
-                          <div className="mt-2">
-                            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full">
-                              <TabsList className="grid grid-cols-3">
-                                <TabsTrigger value="html">HTML</TabsTrigger>
-                                <TabsTrigger value="css">CSS</TabsTrigger>
-                                <TabsTrigger value="js">JavaScript</TabsTrigger>
-                              </TabsList>
-                              <TabsContent value="html">
-                                <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px]">
-                                  <code>{message.code.html}</code>
-                                </pre>
-                              </TabsContent>
-                              <TabsContent value="css">
-                                <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px]">
-                                  <code>{message.code.css}</code>
-                                </pre>
-                              </TabsContent>
-                              <TabsContent value="js">
-                                <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px]">
-                                  <code>{message.code.js}</code>
-                                </pre>
-                              </TabsContent>
-                            </Tabs>
-                            
-                            <div className="flex gap-2 mt-2 justify-end">
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => saveToHistory(message.id)}
-                                title="Save to chat history"
-                              >
-                                <Save className="h-4 w-4 mr-1" />
-                                <span className="text-xs">Save</span>
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => handleModifyCode(message.id)}
-                                title="Modify code"
-                              >
-                                <Edit className="h-4 w-4 mr-1" />
-                                <span className="text-xs">Edit</span>
-                              </Button>
-                            </div>
-                            
-                            {message.id === chatHistory[chatHistory.length - 1].id && showModificationPrompt && (
-                              <Alert className="bg-primary/5 border-primary/20 mt-2">
-                                <AlertTitle className="flex items-center gap-2">
-                                  <MessageSquare className="h-4 w-4" />
-                                  Would you like to modify this code?
-                                </AlertTitle>
-                                <AlertDescription className="mt-2 flex gap-2">
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    onClick={() => handleModifyCode(message.id)}
-                                  >
-                                    Yes, make changes
-                                  </Button>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    onClick={() => setShowModificationPrompt(false)}
-                                  >
-                                    No, keep as is
-                                  </Button>
-                                </AlertDescription>
-                              </Alert>
-                            )}
+    <div className="flex flex-col h-[calc(100vh-8.5rem)] overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <Card className="h-full">
+          <div className="h-full overflow-hidden flex flex-col">
+            <div className="flex-1 overflow-y-auto p-4">
+              {chatHistory.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
+                  <MessageSquare className="h-12 w-12 mb-4 opacity-50" />
+                  <h3 className="text-lg font-medium mb-2">No conversations yet</h3>
+                  <p className="text-sm mb-4">Start by typing a prompt below or try one of the sample prompts.</p>
+                </div>
+              ) : (
+                <div className="space-y-4 pb-4">
+                  {chatHistory.map((message) => (
+                    <div 
+                      key={message.id}
+                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`flex gap-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <Avatar className={`h-8 w-8 ${message.type === 'user' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                          <span className="text-xs">{message.type === 'user' ? 'U' : 'AI'}</span>
+                        </Avatar>
+                        <div>
+                          <div 
+                            className={`rounded-lg p-3 text-sm ${
+                              message.type === 'user' 
+                                ? 'bg-primary text-primary-foreground' 
+                                : 'bg-muted'
+                            }`}
+                          >
+                            {message.content}
                           </div>
-                        )}
+                          
+                          {message.code && (
+                            <div className="mt-2">
+                              <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full">
+                                <TabsList className="grid grid-cols-3">
+                                  <TabsTrigger value="html">HTML</TabsTrigger>
+                                  <TabsTrigger value="css">CSS</TabsTrigger>
+                                  <TabsTrigger value="js">JavaScript</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="html">
+                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto">
+                                    <code>{message.code.html}</code>
+                                  </pre>
+                                </TabsContent>
+                                <TabsContent value="css">
+                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto">
+                                    <code>{message.code.css}</code>
+                                  </pre>
+                                </TabsContent>
+                                <TabsContent value="js">
+                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto">
+                                    <code>{message.code.js}</code>
+                                  </pre>
+                                </TabsContent>
+                              </Tabs>
+                              
+                              <div className="flex gap-2 mt-2 justify-end">
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  onClick={() => saveToHistory(message.id)}
+                                  title="Save to chat history"
+                                >
+                                  <Save className="h-4 w-4 mr-1" />
+                                  <span className="text-xs">Save</span>
+                                </Button>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm" 
+                                  onClick={() => handleModifyCode(message.id)}
+                                  title="Modify code"
+                                >
+                                  <Edit className="h-4 w-4 mr-1" />
+                                  <span className="text-xs">Edit</span>
+                                </Button>
+                              </div>
+                              
+                              {message.id === chatHistory[chatHistory.length - 1].id && showModificationPrompt && (
+                                <Alert className="bg-primary/5 border-primary/20 mt-2">
+                                  <AlertTitle className="flex items-center gap-2">
+                                    <MessageSquare className="h-4 w-4" />
+                                    Would you like to modify this code?
+                                  </AlertTitle>
+                                  <AlertDescription className="mt-2 flex gap-2">
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm" 
+                                      onClick={() => handleModifyCode(message.id)}
+                                    >
+                                      Yes, make changes
+                                    </Button>
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => setShowModificationPrompt(false)}
+                                    >
+                                      No, keep as is
+                                    </Button>
+                                  </AlertDescription>
+                                </Alert>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </ScrollArea>
-          
-          {errorDetails && !chatHistory.some(msg => msg.content.includes(errorDetails)) && (
-            <CardContent className="pt-0">
-              <Alert variant="destructive" className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                  {errorStatus === 'missing_api_key' ? (
-                    <>
-                      The Gemini API key is missing or not properly configured. Please contact the administrator to set up the API key.
-                    </>
-                  ) : errorStatus === 'parse_error' ? (
-                    <>
-                      <p>The AI model returned a response that could not be parsed as JSON. The model may need additional training to return the correct format.</p>
-                      {rawResponsePreview && (
-                        <div className="mt-2">
-                          <p className="font-semibold">Raw response preview:</p>
-                          <pre className="mt-1 text-xs p-2 bg-gray-800 text-white overflow-x-auto rounded">
-                            {rawResponsePreview}
-                          </pre>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    errorDetails
-                  )}
-                </AlertDescription>
-              </Alert>
-            </CardContent>
-          )}
-          
-          <CardContent className="border-t p-4">
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Try these sample prompts:</p>
-              <div className="flex flex-wrap gap-2">
-                {SAMPLE_PROMPTS.map((samplePrompt, index) => (
-                  <Button 
-                    key={index} 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleSamplePrompt(samplePrompt)}
-                    className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
-                  >
-                    {samplePrompt.length > 30 ? samplePrompt.substring(0, 30) + '...' : samplePrompt}
-                  </Button>
-                ))}
-              </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
             </div>
             
-            <div className="flex gap-2 mt-4">
-              <Input
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe the component you want to generate..."
-                disabled={isGenerating}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey && prompt.trim()) {
-                    e.preventDefault();
-                    handleGenerateCode();
-                  }
-                }}
-              />
-              <Button 
-                onClick={handleGenerateCode} 
-                disabled={isGenerating || !prompt.trim()}
-                className="shrink-0 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Send className="mr-2 h-4 w-4" />
-                    Send
-                  </>
-                )}
-              </Button>
+            {errorDetails && !chatHistory.some(msg => msg.content.includes(errorDetails)) && (
+              <CardContent className="pt-0">
+                <Alert variant="destructive" className="mb-4">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Error</AlertTitle>
+                  <AlertDescription>
+                    {errorStatus === 'missing_api_key' ? (
+                      <>
+                        The Gemini API key is missing or not properly configured. Please contact the administrator to set up the API key.
+                      </>
+                    ) : errorStatus === 'parse_error' ? (
+                      <>
+                        <p>The AI model returned a response that could not be parsed as JSON. The model may need additional training to return the correct format.</p>
+                        {rawResponsePreview && (
+                          <div className="mt-2">
+                            <p className="font-semibold">Raw response preview:</p>
+                            <pre className="mt-1 text-xs p-2 bg-gray-800 text-white overflow-x-auto rounded">
+                              {rawResponsePreview}
+                            </pre>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      errorDetails
+                    )}
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            )}
+            
+            <div className="border-t p-4 bg-white dark:bg-gray-900">
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Try these sample prompts:</p>
+                <div className="flex flex-wrap gap-2">
+                  {SAMPLE_PROMPTS.map((samplePrompt, index) => (
+                    <Button 
+                      key={index} 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleSamplePrompt(samplePrompt)}
+                      className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                    >
+                      {samplePrompt.length > 30 ? samplePrompt.substring(0, 30) + '...' : samplePrompt}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex gap-2 mt-4">
+                <Input
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder="Describe the component you want to generate..."
+                  disabled={isGenerating}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && prompt.trim()) {
+                      e.preventDefault();
+                      handleGenerateCode();
+                    }
+                  }}
+                />
+                <Button 
+                  onClick={handleGenerateCode} 
+                  disabled={isGenerating || !prompt.trim()}
+                  className="shrink-0 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700"
+                >
+                  {isGenerating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-4 w-4" />
+                      Send
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
     </div>

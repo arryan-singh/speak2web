@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -97,7 +96,7 @@ const ProjectPreview: React.FC = () => {
   };
 
   return (
-    <div className="h-full bg-gray-100 dark:bg-gray-900 p-4 overflow-auto flex flex-col">
+    <div className="h-[calc(100vh-8.5rem)] bg-gray-100 dark:bg-gray-900 p-4 overflow-hidden flex flex-col">
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Project Preview</h1>
@@ -124,27 +123,25 @@ const ProjectPreview: React.FC = () => {
         </ToggleGroup>
       </div>
       
-      {/* Preview/Code area with better overflow handling */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-grow overflow-hidden">
-        <div className="h-full flex flex-col">
-          {/* Preview header */}
-          <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-3 flex items-center">
-            <div className="flex items-center space-x-1 ml-2">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            </div>
-            <div className="flex-1 text-center">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                {viewMode === 'preview' ? 'Live Preview' : 'Code View'}
-              </span>
-            </div>
+      {/* Preview/Code area with proper overflow handling */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-grow overflow-hidden flex flex-col">
+        {/* Preview header */}
+        <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-3 flex items-center">
+          <div className="flex items-center space-x-1 ml-2">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
-          
-          {/* Preview content with overflow handling */}
-          <div className="flex-1 p-6 overflow-auto bg-white dark:bg-gray-800">
-            {renderPreview()}
+          <div className="flex-1 text-center">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+              {viewMode === 'preview' ? 'Live Preview' : 'Code View'}
+            </span>
           </div>
+        </div>
+        
+        {/* Preview content with proper overflow handling */}
+        <div className="flex-1 overflow-auto bg-white dark:bg-gray-800 p-6">
+          {renderPreview()}
         </div>
       </div>
     </div>

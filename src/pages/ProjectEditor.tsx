@@ -84,7 +84,7 @@ const ProjectEditor = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
+    <div className="flex flex-col h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white">
       {/* Fixed Navigation Bar with higher z-index */}
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-3 px-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="flex items-center gap-4">
@@ -106,10 +106,10 @@ const ProjectEditor = () => {
       </header>
 
       {/* Main Content with padding-top to account for fixed header */}
-      <div className="flex-1 mt-14">
-        <ResizablePanelGroup direction="horizontal" className="w-full">
+      <div className="pt-14 flex flex-col h-screen">
+        <ResizablePanelGroup direction="horizontal" className="flex-1">
           <ResizablePanel defaultSize={40} minSize={30} maxSize={60}>
-            <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <div className="h-full border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
               <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Code Generator</h2>
               </div>
@@ -122,7 +122,7 @@ const ProjectEditor = () => {
                   </div>
                 </div>
               ) : !isApiKeyConfigured ? (
-                <div className="p-4 overflow-y-auto">
+                <div className="p-4 overflow-y-auto h-[calc(100vh-8.5rem)]">
                   <ApiKeySetup onKeyConfigured={handleApiKeyConfigured} />
                 </div>
               ) : (
