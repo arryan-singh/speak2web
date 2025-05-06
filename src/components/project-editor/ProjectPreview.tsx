@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -103,27 +104,37 @@ const ProjectPreview: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
-        {/* Improved toggle buttons with better contrast in dark mode */}
+        {/* Enhanced toggle buttons with improved contrast and visibility */}
         <ToggleGroup 
           type="single" 
           value={viewMode} 
           onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} 
-          className="border dark:border-gray-500 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-1"
+          className="border dark:border-blue-400 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-1 overflow-hidden"
         >
           <ToggleGroupItem 
             value="preview" 
             aria-label="Show preview" 
-            className="text-sm font-medium text-gray-700 dark:text-gray-200 dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white dark:data-[state=off]:bg-gray-800 dark:hover:bg-gray-700 data-[state=on]:bg-blue-100"
+            className="text-sm font-medium text-gray-700 dark:text-white
+                     data-[state=on]:bg-blue-500 data-[state=on]:text-white 
+                     dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white 
+                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-gray-200
+                     dark:hover:bg-gray-600 hover:bg-gray-100
+                     transition-colors"
           >
-            <Eye className="h-4 w-4 mr-1" />
+            <Eye className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Preview</span>
           </ToggleGroupItem>
           <ToggleGroupItem 
             value="code" 
             aria-label="Show code" 
-            className="text-sm font-medium text-gray-700 dark:text-gray-200 dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white dark:data-[state=off]:bg-gray-800 dark:hover:bg-gray-700 data-[state=on]:bg-blue-100"
+            className="text-sm font-medium text-gray-700 dark:text-white
+                     data-[state=on]:bg-blue-500 data-[state=on]:text-white 
+                     dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white 
+                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-gray-200
+                     dark:hover:bg-gray-600 hover:bg-gray-100
+                     transition-colors"
           >
-            <Code className="h-4 w-4 mr-1" />
+            <Code className="h-4 w-4 mr-2" />
             <span className="hidden sm:inline">Code</span>
           </ToggleGroupItem>
         </ToggleGroup>
@@ -139,7 +150,7 @@ const ProjectPreview: React.FC = () => {
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
           </div>
           <div className="flex-1 text-center">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+            <span className="text-sm font-medium text-gray-700 dark:text-white">
               {viewMode === 'preview' ? 'Live Preview' : 'Code View'}
             </span>
           </div>
