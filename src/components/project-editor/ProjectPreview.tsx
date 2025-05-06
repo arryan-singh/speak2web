@@ -104,7 +104,7 @@ const ProjectPreview: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
-        {/* Enhanced toggle buttons with improved contrast and visibility */}
+        {/* Significantly improved visibility for toggle buttons */}
         <ToggleGroup 
           type="single" 
           value={viewMode} 
@@ -114,28 +114,28 @@ const ProjectPreview: React.FC = () => {
           <ToggleGroupItem 
             value="preview" 
             aria-label="Show preview" 
-            className="text-sm font-medium text-gray-700 dark:text-white
+            className="text-sm font-medium text-gray-800 dark:text-white
                      data-[state=on]:bg-blue-500 data-[state=on]:text-white 
-                     dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white 
-                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-gray-200
+                     dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white 
+                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-white
                      dark:hover:bg-gray-600 hover:bg-gray-100
-                     transition-colors"
+                     transition-colors relative z-10 px-3 py-1.5"
           >
             <Eye className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Preview</span>
+            <span className="inline">Preview</span>
           </ToggleGroupItem>
           <ToggleGroupItem 
             value="code" 
             aria-label="Show code" 
-            className="text-sm font-medium text-gray-700 dark:text-white
+            className="text-sm font-medium text-gray-800 dark:text-white
                      data-[state=on]:bg-blue-500 data-[state=on]:text-white 
-                     dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white 
-                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-gray-200
+                     dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white 
+                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-white
                      dark:hover:bg-gray-600 hover:bg-gray-100
-                     transition-colors"
+                     transition-colors relative z-10 px-3 py-1.5"
           >
             <Code className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Code</span>
+            <span className="inline">Code</span>
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
