@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -25,11 +26,18 @@ const Index = () => {
       recognitionInstance.lang = 'en-US';
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const current = event.resultIndex;
-        const result = event.results[current][0].transcript.toLowerCase();
-        setTranscript(result);
-        if (result.includes("create new") || result.includes("create project")) {
+        const transcriptText = event.results[current][0].transcript.toLowerCase();
+        setTranscript(transcriptText);
+        
+        // Debug the transcript to see exactly what's being recognized
+        console.log("Speech recognized:", transcriptText);
+        
+        // More explicit command detection
+        if (transcriptText.includes("create new") || transcriptText.includes("create project")) {
+          console.log("Create command detected!");
           handleCommand("create");
-        } else if (result.includes("edit project") || result.includes("edit")) {
+        } else if (transcriptText.includes("edit project") || transcriptText.includes("edit")) {
+          console.log("Edit command detected!");
           handleCommand("edit");
         }
       };
@@ -78,13 +86,21 @@ const Index = () => {
   };
   
   const handleCommand = (command: string) => {
+    console.log(`Handling command: ${command}, User authenticated: ${!!user}`);
+    
     if (command === "create" || command === "edit") {
-      // Modified logic: If user is authenticated, navigate directly to editor
       if (user) {
+        // User is authenticated, navigate directly to editor
         toast({
           title: "Command Recognized",
           description: `${command === "create" ? "Creating" : "Editing"} project...`
         });
+        // Force stop listening before navigation to prevent memory leaks
+        if (recognition && isListening) {
+          recognition.stop();
+          setIsListening(false);
+        }
+        console.log("Navigating to /editor");
         navigate("/editor");
       } else {
         // Only redirect to login if user is not authenticated
