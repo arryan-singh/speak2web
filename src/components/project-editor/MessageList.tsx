@@ -16,7 +16,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, messagesEndRef }) =
             key={index} 
             className={`${
               message.type === 'user' 
-                ? 'ml-auto bg-blue-600 text-white dark:bg-blue-500' 
+                ? 'ml-auto bg-blue-600 text-white dark:bg-blue-500 dark:border dark:border-blue-400' 
                 : 'bg-white text-gray-800 border border-gray-200 dark:bg-gray-700 dark:text-white dark:border-gray-600'
             } p-4 rounded-xl max-w-[85%] shadow-sm animate-fade-in`}
             style={{ animationDelay: `${index * 0.1}s` }}

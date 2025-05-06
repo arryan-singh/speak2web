@@ -103,11 +103,17 @@ const ProjectPreview: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
-        <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} className="border dark:border-gray-600 bg-white dark:bg-gray-700 rounded-lg shadow-sm p-1">
+        {/* Improved toggle buttons with better contrast in dark mode */}
+        <ToggleGroup 
+          type="single" 
+          value={viewMode} 
+          onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} 
+          className="border dark:border-gray-500 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-1"
+        >
           <ToggleGroupItem 
             value="preview" 
             aria-label="Show preview" 
-            className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 dark:data-[state=off]:bg-gray-700 data-[state=on]:bg-blue-100"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200 dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white dark:data-[state=off]:bg-gray-800 dark:hover:bg-gray-700 data-[state=on]:bg-blue-100"
           >
             <Eye className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Preview</span>
@@ -115,7 +121,7 @@ const ProjectPreview: React.FC = () => {
           <ToggleGroupItem 
             value="code" 
             aria-label="Show code" 
-            className="text-sm font-medium dark:text-white dark:data-[state=on]:bg-blue-600 dark:data-[state=off]:bg-gray-700 data-[state=on]:bg-blue-100"
+            className="text-sm font-medium text-gray-700 dark:text-gray-200 dark:data-[state=on]:bg-blue-600 dark:data-[state=on]:text-white dark:data-[state=off]:bg-gray-800 dark:hover:bg-gray-700 data-[state=on]:bg-blue-100"
           >
             <Code className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Code</span>
@@ -123,7 +129,7 @@ const ProjectPreview: React.FC = () => {
         </ToggleGroup>
       </div>
       
-      {/* Preview/Code area with proper overflow handling */}
+      {/* Preview/Code area */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm flex-grow overflow-hidden flex flex-col">
         {/* Preview header */}
         <div className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 p-3 flex items-center">
@@ -139,7 +145,7 @@ const ProjectPreview: React.FC = () => {
           </div>
         </div>
         
-        {/* Preview content with proper overflow handling */}
+        {/* Preview content */}
         <div className="flex-1 overflow-auto bg-white dark:bg-gray-800 p-6">
           {renderPreview()}
         </div>

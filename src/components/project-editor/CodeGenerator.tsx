@@ -233,14 +233,12 @@ const CodeGenerator = () => {
               <Button
                 size="sm"
                 variant={isListening ? "destructive" : "outline"}
-                className="flex items-center gap-2"
-                onClick={toggleListening}
+                className="flex items-center gap-2 dark:border-gray-500 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
               >
                 {isListening ? "Disable Voice Input" : "Enable Voice Input"}
               </Button>
             </div>
             
-            {/* Increased the chat area by giving it more flex space */}
             <div className="flex-1 overflow-y-auto p-4">
               {chatHistory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-6 text-gray-500">
@@ -256,15 +254,15 @@ const CodeGenerator = () => {
                       className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div className={`flex gap-3 max-w-[80%] ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                        <Avatar className={`h-8 w-8 ${message.type === 'user' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                        <Avatar className={`h-8 w-8 ${message.type === 'user' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-600'}`}>
                           <span className="text-xs">{message.type === 'user' ? 'U' : 'AI'}</span>
                         </Avatar>
-                        <div>
+                        <div className="w-full">
                           <div 
                             className={`rounded-lg p-3 text-sm ${
                               message.type === 'user' 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'bg-muted'
+                                ? 'bg-primary text-primary-foreground dark:bg-blue-600 dark:text-white' 
+                                : 'bg-muted dark:bg-gray-700 dark:text-white dark:border dark:border-gray-600'
                             }`}
                           >
                             {message.content}
@@ -273,24 +271,24 @@ const CodeGenerator = () => {
                           {message.code && (
                             <div className="mt-2">
                               <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="w-full">
-                                <TabsList className="grid grid-cols-3">
-                                  <TabsTrigger value="html">HTML</TabsTrigger>
-                                  <TabsTrigger value="css">CSS</TabsTrigger>
-                                  <TabsTrigger value="js">JavaScript</TabsTrigger>
+                                <TabsList className="grid grid-cols-3 dark:bg-gray-700 dark:text-white">
+                                  <TabsTrigger value="html" className="dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:text-gray-200">HTML</TabsTrigger>
+                                  <TabsTrigger value="css" className="dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:text-gray-200">CSS</TabsTrigger>
+                                  <TabsTrigger value="js" className="dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white dark:text-gray-200">JavaScript</TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="html">
-                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto">
-                                    <code>{message.code.html}</code>
+                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto border dark:border-gray-700">
+                                    <code className="text-gray-800 dark:text-gray-200">{message.code.html}</code>
                                   </pre>
                                 </TabsContent>
                                 <TabsContent value="css">
-                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto">
-                                    <code>{message.code.css}</code>
+                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto border dark:border-gray-700">
+                                    <code className="text-gray-800 dark:text-gray-200">{message.code.css}</code>
                                   </pre>
                                 </TabsContent>
                                 <TabsContent value="js">
-                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto">
-                                    <code>{message.code.js}</code>
+                                  <pre className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg overflow-x-auto text-xs max-h-[300px] overflow-y-auto border dark:border-gray-700">
+                                    <code className="text-gray-800 dark:text-gray-200">{message.code.js}</code>
                                   </pre>
                                 </TabsContent>
                               </Tabs>
@@ -301,6 +299,7 @@ const CodeGenerator = () => {
                                   size="sm" 
                                   onClick={() => saveToHistory(message.id)}
                                   title="Save to chat history"
+                                  className="dark:bg-gray-700 dark:text-white dark:border-gray-500 dark:hover:bg-gray-600"
                                 >
                                   <Save className="h-4 w-4 mr-1" />
                                   <span className="text-xs">Save</span>
@@ -310,6 +309,7 @@ const CodeGenerator = () => {
                                   size="sm" 
                                   onClick={() => handleModifyCode(message.id)}
                                   title="Modify code"
+                                  className="dark:bg-gray-700 dark:text-white dark:border-gray-500 dark:hover:bg-gray-600"
                                 >
                                   <Edit className="h-4 w-4 mr-1" />
                                   <span className="text-xs">Edit</span>
@@ -317,8 +317,8 @@ const CodeGenerator = () => {
                               </div>
                               
                               {message.id === chatHistory[chatHistory.length - 1].id && showModificationPrompt && (
-                                <Alert className="bg-primary/5 border-primary/20 mt-2">
-                                  <AlertTitle className="flex items-center gap-2">
+                                <Alert className="bg-primary/5 border-primary/20 mt-2 dark:bg-blue-900/30 dark:border-blue-500/30">
+                                  <AlertTitle className="flex items-center gap-2 dark:text-white">
                                     <MessageSquare className="h-4 w-4" />
                                     Would you like to modify this code?
                                   </AlertTitle>
@@ -327,6 +327,7 @@ const CodeGenerator = () => {
                                       variant="outline" 
                                       size="sm" 
                                       onClick={() => handleModifyCode(message.id)}
+                                      className="dark:bg-gray-700 dark:text-white dark:border-gray-500 dark:hover:bg-gray-600"
                                     >
                                       Yes, make changes
                                     </Button>
@@ -334,6 +335,7 @@ const CodeGenerator = () => {
                                       variant="ghost" 
                                       size="sm" 
                                       onClick={() => setShowModificationPrompt(false)}
+                                      className="dark:text-gray-200 dark:hover:bg-gray-700"
                                     >
                                       No, keep as is
                                     </Button>
@@ -381,17 +383,16 @@ const CodeGenerator = () => {
               </CardContent>
             )}
             
-            {/* Simplified sample prompts section */}
             <div className="border-t py-2 px-4 bg-white dark:bg-gray-900">
               <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-xs font-medium">Try:</span>
+                <span className="text-xs font-medium dark:text-gray-300">Try:</span>
                 {SAMPLE_PROMPTS.map((samplePrompt, index) => (
                   <Button 
                     key={index} 
                     variant="outline" 
                     size="sm" 
                     onClick={() => handleSamplePrompt(samplePrompt)}
-                    className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                    className="text-xs dark:text-white dark:bg-gray-700 dark:hover:bg-gray-600 dark:border-gray-500"
                   >
                     {samplePrompt.length > 35 ? samplePrompt.substring(0, 35) + '...' : samplePrompt}
                   </Button>
