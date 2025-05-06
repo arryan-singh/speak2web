@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -80,21 +79,22 @@ const Index = () => {
   
   const handleCommand = (command: string) => {
     if (command === "create" || command === "edit") {
-      // Check if user is authenticated before navigation
-      if (!user) {
+      // Modified logic: If user is authenticated, navigate directly to editor
+      if (user) {
+        toast({
+          title: "Command Recognized",
+          description: `${command === "create" ? "Creating" : "Editing"} project...`
+        });
+        navigate("/editor");
+      } else {
+        // Only redirect to login if user is not authenticated
         toast({
           title: "Authentication Required",
           description: `You need to login before you can ${command === "create" ? "create" : "edit"} a project.`,
           variant: "destructive"
         });
         navigate("/login");
-        return;
       }
-      toast({
-        title: "Command Recognized",
-        description: `${command === "create" ? "Creating" : "Editing"} project...`
-      });
-      navigate("/editor");
     }
   };
   
