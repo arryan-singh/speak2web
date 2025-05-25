@@ -34,13 +34,13 @@ const MessageList: React.FC<MessageListProps> = ({ messages, messagesEndRef }) =
               )}
             </div>
             
-            {/* Message content with significantly improved contrast */}
+            {/* Message content with maximum contrast for readability */}
             <div 
               className={`${
                 message.type === 'user' 
-                  ? 'bg-blue-600 text-white dark:bg-blue-500 dark:text-white shadow-md border border-blue-700 dark:border-blue-400' 
-                  : 'bg-white text-gray-800 border border-gray-200 dark:bg-gray-700 dark:text-white dark:border-gray-600'
-              } p-4 rounded-xl max-w-[85%] shadow-sm animate-fade-in`}
+                  ? 'bg-blue-700 text-white dark:bg-blue-600 dark:text-white shadow-lg border-2 border-blue-800 dark:border-blue-500' 
+                  : 'bg-white text-gray-900 border-2 border-gray-300 dark:bg-gray-700 dark:text-white dark:border-gray-500 shadow-md'
+              } p-4 rounded-xl max-w-[85%] animate-fade-in`}
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {message.isProcessing ? (
@@ -50,7 +50,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, messagesEndRef }) =
                   <div className="w-2 h-2 bg-gray-300 dark:bg-gray-300 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                 </div>
               ) : (
-                <p className="whitespace-pre-wrap break-words font-medium">{message.content}</p>
+                <p className="whitespace-pre-wrap break-words font-semibold text-base leading-relaxed">{message.content}</p>
               )}
             </div>
           </div>
