@@ -34,7 +34,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, messagesEndRef }) =
               )}
             </div>
             
-            {/* Message content with maximum contrast for readability */}
+            {/* Message content with pure white text for user messages */}
             <div 
               className={`${
                 message.type === 'user' 
@@ -50,7 +50,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, messagesEndRef }) =
                   <div className="w-2 h-2 bg-gray-300 dark:bg-gray-300 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                 </div>
               ) : (
-                <p className="whitespace-pre-wrap break-words font-semibold text-base leading-relaxed">{message.content}</p>
+                <p className="whitespace-pre-wrap break-words font-semibold text-base leading-relaxed text-white">{message.content}</p>
               )}
             </div>
           </div>
