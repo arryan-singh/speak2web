@@ -104,40 +104,44 @@ const ProjectPreview: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
-        {/* Significantly improved visibility for toggle buttons */}
-        <ToggleGroup 
-          type="single" 
-          value={viewMode} 
-          onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} 
-          className="border dark:border-blue-400 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-1 overflow-hidden"
-        >
-          <ToggleGroupItem 
-            value="preview" 
-            aria-label="Show preview" 
-            className="text-sm font-medium text-gray-800 dark:text-white
-                     data-[state=on]:bg-blue-500 data-[state=on]:text-white 
-                     dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white 
-                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-white
-                     dark:hover:bg-gray-600 hover:bg-gray-100
-                     transition-colors relative z-10 px-3 py-1.5"
+        {/* Significantly improved toggle buttons with maximum contrast */}
+        <div className="bg-gray-900 dark:bg-white rounded-lg p-1 shadow-lg border-2 border-gray-300 dark:border-gray-600">
+          <ToggleGroup 
+            type="single" 
+            value={viewMode} 
+            onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} 
+            className="flex gap-1"
           >
-            <Eye className="h-4 w-4 mr-2" />
-            <span className="inline">Preview</span>
-          </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="code" 
-            aria-label="Show code" 
-            className="text-sm font-medium text-gray-800 dark:text-white
-                     data-[state=on]:bg-blue-500 data-[state=on]:text-white 
-                     dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white 
-                     dark:data-[state=off]:bg-gray-700 dark:data-[state=off]:text-white
-                     dark:hover:bg-gray-600 hover:bg-gray-100
-                     transition-colors relative z-10 px-3 py-1.5"
-          >
-            <Code className="h-4 w-4 mr-2" />
-            <span className="inline">Code</span>
-          </ToggleGroupItem>
-        </ToggleGroup>
+            <ToggleGroupItem 
+              value="preview" 
+              aria-label="Show preview" 
+              className="px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200
+                       text-white dark:text-gray-900 
+                       data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:shadow-md
+                       data-[state=off]:bg-transparent data-[state=off]:hover:bg-gray-700 
+                       dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white
+                       dark:data-[state=off]:hover:bg-gray-200 dark:data-[state=off]:text-gray-900
+                       border-0 outline-0"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              <span>Preview</span>
+            </ToggleGroupItem>
+            <ToggleGroupItem 
+              value="code" 
+              aria-label="Show code" 
+              className="px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200
+                       text-white dark:text-gray-900
+                       data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:shadow-md
+                       data-[state=off]:bg-transparent data-[state=off]:hover:bg-gray-700
+                       dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white 
+                       dark:data-[state=off]:hover:bg-gray-200 dark:data-[state=off]:text-gray-900
+                       border-0 outline-0"
+            >
+              <Code className="h-4 w-4 mr-2" />
+              <span>Code</span>
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
       </div>
       
       {/* Preview/Code area */}
