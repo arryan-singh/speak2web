@@ -104,43 +104,30 @@ const ProjectPreview: React.FC = () => {
           <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time preview of your project</p>
         </div>
         
-        {/* Significantly improved toggle buttons with maximum contrast */}
-        <div className="bg-gray-900 dark:bg-white rounded-lg p-1 shadow-lg border-2 border-gray-300 dark:border-gray-600">
-          <ToggleGroup 
-            type="single" 
-            value={viewMode} 
-            onValueChange={(value) => value && setViewMode(value as 'preview' | 'code')} 
-            className="flex gap-1"
+        {/* Completely redesigned toggle buttons with maximum contrast */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode('preview')}
+            className={`flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-2 ${
+              viewMode === 'preview'
+                ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+            }`}
           >
-            <ToggleGroupItem 
-              value="preview" 
-              aria-label="Show preview" 
-              className="px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200
-                       text-white dark:text-gray-900 
-                       data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:shadow-md
-                       data-[state=off]:bg-transparent data-[state=off]:hover:bg-gray-700 
-                       dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white
-                       dark:data-[state=off]:hover:bg-gray-200 dark:data-[state=off]:text-gray-900
-                       border-0 outline-0"
-            >
-              <Eye className="h-4 w-4 mr-2" />
-              <span>Preview</span>
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="code" 
-              aria-label="Show code" 
-              className="px-4 py-2 rounded-md font-semibold text-sm transition-all duration-200
-                       text-white dark:text-gray-900
-                       data-[state=on]:bg-blue-600 data-[state=on]:text-white data-[state=on]:shadow-md
-                       data-[state=off]:bg-transparent data-[state=off]:hover:bg-gray-700
-                       dark:data-[state=on]:bg-blue-500 dark:data-[state=on]:text-white 
-                       dark:data-[state=off]:hover:bg-gray-200 dark:data-[state=off]:text-gray-900
-                       border-0 outline-0"
-            >
-              <Code className="h-4 w-4 mr-2" />
-              <span>Code</span>
-            </ToggleGroupItem>
-          </ToggleGroup>
+            <Eye className="h-4 w-4 mr-2" />
+            Preview
+          </button>
+          <button
+            onClick={() => setViewMode('code')}
+            className={`flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 border-2 ${
+              viewMode === 'code'
+                ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700'
+            }`}
+          >
+            <Code className="h-4 w-4 mr-2" />
+            Code
+          </button>
         </div>
       </div>
       
